@@ -1,0 +1,133 @@
+\documentclass[a4paper]{article}
+
+%% Language and font encodings
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+
+%% Sets page size and margins
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=2cm]{geometry}
+
+%% Useful packages
+\usepackage{algorithm}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[colorinlistoftodos]{todonotes}
+% \usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{enumerate}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{mathrsfs}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{tikzscale}
+\usetikzlibrary{shapes.geometric, arrows}
+\tikzset{
+    vertex/.style={circle,draw,minimum size=1.5em},
+    edge/.style={->,> = latex'}
+}
+\tikzstyle{triger} = [circle, minimum width=2cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{process} = [rectangle, minimum width=1cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{decision} = [diamond, minimum width=2cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{block} = [rectangle, minimum width=3cm, minimum height=3cm, text centered, draw=black]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\title{HW0}
+\author{Kevin Chang}
+
+\newtheorem{definition}{Definition}
+\newtheorem{problem}{Problem}
+\newtheorem{property}{Property}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{suspect}{Suspect}[section]
+\newtheorem{example}{Example}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\graphicspath{ {./images/} }
+
+\begin{document}
+\maketitle
+
+\section{}
+What is your current field of study/research and why are you considering this class?
+
+\emph{Answer:}
+My current field of research is cyber-physical systems, and I am considering this class because it provides the fundamental concepts and methodologies that form the foundation of this area.
+
+\section{}
+Based on the syllabus, is there any specific topic that you would like to see covered in class?
+
+\emph{Answer:}
+I am comfortable with the topics outlined in the syllabus and am happy to follow the material that the professor intends to cover.
+
+\section{}
+How familiar are you with the following programming languages? 0 = never used, 1 = used a bit, 2 = used a lot / very familiar
+
+\begin{itemize}
+    \item C/ C++: 2
+    \item Java: 0
+    \item MATLAB: 0
+    \item Python: 2
+    \item SystemC: 0
+    \item Verilog: 1
+\end{itemize}
+
+\section{}
+How familiar are you with the following simulation/modeling environments? 0 = never used, 1 = used a bit, 2 = used a lot / very familiar
+
+\begin{itemize}
+    \item Simulink: 0
+    \item Dymola/Modelica: 0
+    \item COMSOL Multiphysics: 0
+    \item Cadence: 1
+        \begin{itemize}
+            \item \textbf{Innovus}: Used for place-and-route in the ISPD Contest.
+        \end{itemize}
+\end{itemize}
+
+\section{}
+Do you have any experience with formal verification or control synthesis tools (e.g., NuSMV, PRISM, TuLiP, etc.)? What about optimization software (e.g., Gurobi, Cplex, GLPK, MATLAB, CVX, etc.)? List them if any.
+
+\emph{Answer:} 
+\begin{itemize}
+    \item Verification and Control Synthesis Tools
+        \begin{itemize}
+            \item \textbf{ABC}: A framework for sequential synthesis and verification developed by the Berkeley Logic Synthesis and Verification Group.
+        \end{itemize}
+    \item Optimization Software
+        \begin{itemize}
+            \item \textbf{MiniSAT}: An open-source SAT solver.
+            \item \textbf{Gurobi}: A commercial solver for linear, integer, and quadratic optimization.
+            \item \textbf{CPLEX}: A commercial solver for linear, mixed-integer, and quadratic programming.
+        \end{itemize}
+\end{itemize}
+
+\section{}
+Pick a cyber-physical system you are interested in and describe its application. In addition:
+
+List the different components in the system.
+
+What makes it a “cyber-physical” system as compared to a traditional embedded system?
+
+What challenges do you see in the operation of this system?
+
+Is it the interfacing between the different components?
+
+The scale of the system? Or something else?
+
+Please elaborate in 1-2 paragraphs.
+
+\emph{Answer:} 
+I am interested in self-driving vehicles, a leading application of cyber-physical systems.
+A self-driving vehicle consists of multiple components, including cameras, radar, lidar, GPS, ultrasonic sensors, on-board controllers, and advanced decision-making algorithms.
+What distinguishes it as a cyber-physical system rather than a traditional embedded system is the tight integration between its computational intelligence and physical dynamics: real-time sensor data must be processed to make control decisions that directly affect the vehicle’s motion in a dynamic and uncertain environment.
+
+The main challenges in operating such a system lie in its scale and complexity, particularly in coordinating the large number of heterogeneous sensors and ensuring robust performance under uncertainty. Interfacing between components is also critical, as failures or delays in communication can compromise safety. Moreover, guaranteeing reliability and formal correctness in unpredictable real-world conditions remains an open research challenge.
+
+
+% \bibliographystyle{plain}
+% \bibliography{main}
+\end{document}
+

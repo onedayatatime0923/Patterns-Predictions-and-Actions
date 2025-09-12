@@ -1,0 +1,22 @@
+# Fdb version 4
+["pdflatex"] 1757695761.91325 "main.tex" "main.pdf" "main" 1757695761.99658 2
+  "/etc/texmf/web2c/texmf.cnf" 1757695364.23383 475 c0e671620eb5563b2130f56340a5fde8 ""
+  "/usr/share/texlive/texmf-dist/tex/generic/babel-english/english.ldf" 1496785618 7008 9ff5fdcc865b01beca2b0fe4a46231d4 ""
+  "/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty" 1704662920 150008 7a05b0fdc0167c04e192003e780ab195 ""
+  "/usr/share/texlive/texmf-dist/tex/generic/babel/locale/en/babel-en.ini" 1661803479 3966 caeee5a9e5771d4446aa1ca9015ba1b2 ""
+  "/usr/share/texlive/texmf-dist/tex/generic/babel/locale/en/babel-english.tex" 1498512262 336 ed676b5e7dfd862bc78d634f6a973f37 ""
+  "/usr/share/texlive/texmf-dist/tex/generic/babel/txtbabel.def" 1704662920 6948 df63e25be1d2bc35bbad5a0141f41348 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/base/article.cls" 1705352648 20144 147463a6a579f4597269ef9565205cfe ""
+  "/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty" 1705352648 5048 425739d70251273bf93e3d51f3c40048 ""
+  "/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo" 1705352648 8448 dbc0dbf4156c0bb9ba01a1c685d3bad0 ""
+  "/usr/share/texlive/texmf-dist/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
+  "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1757695373 6800790 1ac043ea62d971eb8c5e1e9bd0bc01c9 ""
+  "main.aux" 1757695336.04321 640 5dd1524935b419d882d7aad53943feed "pdflatex"
+  "main.tex" 1757695760.12695 5265 07bce16c09a5092c577ea169e6b9601b ""
+  "utf8x.def" 0 -1 0 ""
+  (generated)
+  "main.aux"
+  "main.log"
+  "main.pdf"
+  (rewritten before read)
