@@ -176,9 +176,9 @@ Now check positive semidefiniteness: for any $v \in \mathbb{R}^n$,
 v^\top \nabla^2 (h\circ f)(x)\, v
 = h''(f(x))\, (v^\top \nabla f(x))^2 \;+\; h'(f(x))\, v^\top \nabla^2 f(x)\, v.
 \]
-Since $h''(f(x)) \ge 0$, $(v^\top \nabla f(x))^2 \ge 0$, $h'(f(x)) \ge 0$, and $v^\top \nabla^2 f(x)\, v \ge 0$ (because $f$ is convex), it follows that
+Since $h''(f(x)) \ge 0$, $(v^\top \nabla f(x))^2 \ge 0$, $h'(f(x)) \ge 0$, and $v^\top \nabla^2 f(x)\, v > 0$ (because $f$ is convex), it follows that
 \[
-v^\top \nabla^2 (h\circ f)(x)\, v \;\ge\; 0 \quad \text{for all } v.
+v^\top \nabla^2 (h\circ f)(x)\, v \; >\; 0 \quad \text{for all } v.
 \]
 
 Thus $\nabla^2 (h\circ f)(x)$ is positive semidefinite for all $x$, and hence $h\circ f$ is convex (has positive curvature).
