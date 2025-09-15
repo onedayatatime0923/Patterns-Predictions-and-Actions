@@ -106,7 +106,11 @@ $$\lim_{n \rightarrow \infty} \mathbb{E}\left[\left(\frac{1}{n} \sum_{i=1}^n Z_i
 
 \begin{itemize}
     \item $X_n =  \sum_{i = 1}^n Z_i - n \mathbb{E}[Z_i]$
-    $$\mathbb{E}[(X_n - \mathbb{E}[X_n])^2] = \mathbb{E}[(X_n)^2]= \sum_{k=1}^n \mathbb{E}[(\mathbb{E}_k [X_n ] - \mathbb{E}_{k-1} [X_n ])^2]=0$$
+    \item $\mathbb{E}_k[X_n] = \mathbb{E}[X_n|Z_1, \dots, Z_k]$
+    \item $|\mathbb{E}_k[X_n] - \mathbb{E}_{k-1}[X_n]| = |Z_k - \mathbb{E}[Z_k]|\leq 2$ with probability 1
+$$\lim_{n \rightarrow \infty} \mathbb{E}\left[\left(\frac{1}{n} \sum_{i=1}^n Z_i - \mu\right)^2\right] = \lim_{n \rightarrow \infty} \mathbb{E}[(X_n)^2] 
+= \lim_{n \rightarrow \infty}\mathbb{E}[(X_n - \mathbb{E}[X_n])^2]$$
+$$= \lim_{n \rightarrow \infty}\sum_{k=1}^n \mathbb{E}[(\mathbb{E}_k [X_n ] - \mathbb{E}_{k-1} [X_n ])^2]=0$$
 \end{itemize}
 \section{}
 An ordering of the the set $\{1, . . . , T \}$ is a sequence of integers $\{\sigma_1 , . . . \sigma_T \}$ where every number between $1$ and $T$ appears exactly once.
@@ -134,13 +138,41 @@ That is, compute
 $$\mathbb{E}\left[\left(x_T - \frac{1}{T-1}\sum_{t=1}^{T-1}x_t\right)^2\right].$$
 when $x_t$ is an exchangable sequence.
 
-\begin{itemize}
-    \item $\{X_i\}_{i=1}^\infty$ are exchangable random variables
-    \item $Z_T = (T-1) X_T - \sum_{t=1}^{T-1} \mathbb{E}[X_i]$
-    \item $\mathbb{E}[Z_{T+1}| Z_0, \dots, Z_T]$
-                        $= \mathbb{E}[Z_T + X_{T+1} - \mathbb{E}[X_T]| Z_0, \dots, Z_T] = Z_T$
-    \item By martingales: $\mathbb{E}[Z_T] = \mathbb{E}[Z_1] = 0$
-\end{itemize}
+Let 
+\[
+\mathbb{E}[x_i] = \mu,\quad \mathrm{Var}(x_i) = \sigma^2,\quad \mathrm{Cov}(x_i, x_j) = c \quad (i \neq j).
+\]
+
+We want
+\[
+\mathbb{E}\!\left[\left(x_T - \frac{1}{T-1}\sum_{t=1}^{T-1} x_t\right)^2\right].
+\]
+
+Since $\mathbb{E}[x_T - \frac{1}{T-1}\sum_{t=1}^{T-1} x_t] = 0$, this equals
+\[
+\mathrm{Var}(x_T - \frac{1}{T-1}\sum_{t=1}^{T-1} x_t)
+= \mathrm{Var}(x_T) + \mathrm{Var}(\frac{1}{T-1}\sum_{t=1}^{T-1} x_t) - 2\,\mathrm{Cov}(x_T, \frac{1}{T-1}\sum_{t=1}^{T-1} x_t).
+\]
+
+Now
+\[
+\mathrm{Var}(\frac{1}{T-1}\sum_{t=1}^{T-1} x_t)
+= \frac{1}{(T-1)^2}\Big( (T-1)\sigma^2 + (T-1)(T-2)c \Big)
+= \frac{\sigma^2}{T-1} + \frac{T-2}{T-1}\,c,
+\]
+and
+\[
+\mathrm{Cov}(x_T, \frac{1}{T-1}\sum_{t=1}^{T-1} x_t)
+= \frac{1}{T-1}\sum_{t=1}^{T-1}\mathrm{Cov}(x_T, x_t) = c.
+\]
+
+Hence
+\[
+\mathbb{E}\!\left[\left(x_T - \frac{1}{T-1}\sum_{t=1}^{T-1} x_t\right)^2\right]
+= \sigma^2 + \left( \frac{\sigma^2}{T-1} + \frac{T-2}{T-1}c \right) - 2c
+= \frac{T}{T-1}(\sigma^2 - c).
+\]
+
 
 \section{}
 A symmetric, $n \times n$ matrix $A$ is called positive definite if for all nonzero vectors $x \in \mathbb{R}^n , x^T Ax > 0$.
@@ -148,20 +180,47 @@ We say a function $f : \mathbb{R}^n \rightarrow \mathbb{R}$ has positive curvatu
 \paragraph{3.1}
 Suppose $f$ has positive curvature. For any vectors $x$ and $z$, we can define a function that maps $\mathbb{R}$ to $\mathbb{R}$ by $g(t) := f (x + tz)$.
 Show the second derivative of $g$ is positive for all $t$.
-\begin{itemize}
-    \item assume $\nabla^2 f(t) = H$
-    \item $\nabla^2 f(x + tz) = z^2H$ (positive define)
-\end{itemize}
+
+$$g(t) := f(x + tz)$$
+Then
+\[
+g'(t) = \nabla f(x+tz)^\top z,
+\]
+and differentiating again,
+\[
+g''(t) = z^\top \nabla^2 f(x+tz)\, z.
+\]
+
+Since $\nabla^2 f(y) \succ 0$ for all $y$, the quadratic form satisfies
+\[
+z^\top \nabla^2 f(x+tz)\, z > 0
+\]
+whenever $z \neq 0$. Therefore,
+\[
+g''(t) > 0 \quad \text{for all $t$ and all nonzero $z$.}
+\]
 \paragraph{3.2}
 Suppose f : $\mathbb{R}^n \rightarrow \mathbb{R}$ has positive curvature.
 Let $M$ be a $n \times d$ dimensional full-rank matrix and $v$ be an $n$-dimensional vector.
 Define $h : \mathbb{R}^d \rightarrow \mathbb{R}$ by $g(u) = f (M u + v).$
 Show that $g$ has positive curvature.
 
-\begin{itemize}
-    \item \emph{Answer}
-    \item $\nabla^2 f(Mu+v) = M^T\nabla^2f(Mu+v)M$ (positive define)
-\end{itemize}
+By the chain rule,
+\[
+\nabla g(u)=M^{\!\top}\,\nabla f(Mu+v),
+\]
+hence differentiating once more,
+\[
+\nabla^2 g(u)=M^{\!\top}\,\nabla^2 f(Mu+v)\,M.
+\]
+Let \(w\in\mathbb{R}^d\setminus\{0\}\). Since \(M\) has full column rank, \(Mw\neq 0\).
+Because \(\nabla^2 f(Mu+v)\succ 0\),
+\[
+w^{\!\top}\nabla^2 g(u)\,w
+= w^{\!\top} M^{\!\top}\nabla^2 f(Mu+v)\,Mw
+= (Mw)^{\!\top}\nabla^2 f(Mu+v)\,(Mw) \;>\; 0.
+\]
+Therefore \(\nabla^2 g(u)\succ 0\) for all \(u\), so \(g\) has positive curvature. \qed
 \paragraph{3.3}
 Suppose $f$ has positive curvature and $h$ is a real valued function that is monotonically increasing and
 whose derivative is monotonically strictly increasing. Show that the composition function $h \circ f$ , where
@@ -217,7 +276,6 @@ Let $v$ have a nonzero component in the eigenspace corresponding to $\lambda=2$.
 x_k = A^k v
 \]
 contains a term proportional to $2^k$, so $\|x_k\|$ grows without bound and cannot converge to $0$.
-The only exception is if the initial vecto
 
 
 \section{}
