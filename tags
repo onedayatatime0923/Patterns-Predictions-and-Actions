@@ -4,3 +4,7 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+3.2	hw1/main.tex	/^\\paragraph{3.2}$/;"	P
+3.3	hw1/main.tex	/^\\paragraph{3.3}$/;"	P
+4.1	hw1/main.tex	/^\\paragraph{4.1}$/;"	P
+4.2	hw1/main.tex	/^\\paragraph{4.2}$/;"	P

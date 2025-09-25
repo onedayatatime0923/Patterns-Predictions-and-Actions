@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.9.12)  12 SEP 2025 14:57
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.8.22)  12 SEP 2025 18:09
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -36,9 +36,9 @@ Language: english 2017/06/06 v3.3r English support from the babel system
 Package babel Info: Hyphen rules for 'canadian' set to \l@english
 (babel)             (\language0). Reported on input line 102.
 Package babel Info: Hyphen rules for 'australian' set to \l@ukenglish
-(babel)             (\language19). Reported on input line 105.
+(babel)             (\language63). Reported on input line 105.
 Package babel Info: Hyphen rules for 'newzealand' set to \l@ukenglish
-(babel)             (\language19). Reported on input line 108.
+(babel)             (\language63). Reported on input line 108.
 )) (/usr/share/texlive/texmf-dist/tex/generic/babel/locale/en/babel-english.tex
 Package babel Info: Importing font and identification data for english
 (babel)             from babel-en.ini. Reported on input line 11.
@@ -1005,7 +1005,7 @@ LaTeX Font Info:    Trying to load font information for U+rsfs on input line 51.
 File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
 ) [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-ts1.enc}] [2] [3] [4] (./main.aux)
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-ts1.enc}] [2] [3] [4] [5] (./main.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
@@ -1014,16 +1014,16 @@ L3 programming layer <2024-01-22>
 Here is how much of TeX's memory you used:
  19217 strings out of 474222
  381011 string characters out of 5748733
- 1937975 words of memory out of 5000000
+ 1938975 words of memory out of 5000000
  41109 multiletter control sequences out of 15000+600000
  572571 words of font info for 78 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  117i,14n,131p,697b,223s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfti1000.pfb>
-Output written on main.pdf (4 pages, 196095 bytes).
+Output written on main.pdf (5 pages, 200514 bytes).
 PDF statistics:
- 105 PDF objects out of 1000 (max. 8388607)
- 65 compressed objects within 1 object stream
+ 108 PDF objects out of 1000 (max. 8388607)
+ 67 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 
