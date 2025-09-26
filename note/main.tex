@@ -126,5 +126,126 @@ Suppose the likelihood functions $p(x \mid y)$ are continuous. Then the optimal 
         \end{itemize}
 \end{itemize}
 
+\paragraph{Fairness}
+\begin{itemize}
+    \item Key statistical measures include:
+        \begin{itemize}
+            \item \textbf{Acceptance rate:} $\Pr[\hat{Y} = 1]$
+            \item \textbf{Error rates:} $\Pr[\hat{Y} = 0 \mid Y = 1],\; \Pr[\hat{Y} = 1 \mid Y = 0]$
+            \item \textbf{Conditional outcome frequency:} $\Pr[Y = 1 \mid R = r]$
+        \end{itemize}
+
+    \item Standard fairness criteria are:
+        \begin{itemize}
+            \item \textbf{Independence:} $R \perp A$ \quad (equal acceptance rates across groups)
+            \item \textbf{Separation:} $R \perp A \mid Y$ \quad (equal error rates across groups)
+            \item \textbf{Sufficiency:} $Y \perp A \mid R$ \quad (equal outcome frequencies given $R$)
+        \end{itemize}
+    \item It is well known that any two criteria are mutually exclusive in general, except in degenerate cases; thus enforcing one typically precludes the others.
+\end{itemize}
+
+\section{Supervised Learning}
+Let $S = \{(x_1, y_1), \ldots, (x_n, y_n)\}$ denote a labeled dataset with $x_i \in \mathcal{X}$ and $y_i \in \mathcal{Y}$.  
+For a predictor $f: \mathcal{X} \to \mathcal{Y}$, the \emph{empirical risk} is
+\[
+    R_S[f] = \frac{1}{n} \sum_{i=1}^n \mathit{loss}\big(f(x_i), y_i\big),
+\]
+
+Three fundamental questions arise:
+\begin{itemize}
+    \item \textbf{Representation:} Which function class $\mathcal{F}$ should we select?
+    \item \textbf{Optimization:} How can the corresponding learning problem be solved efficiently?
+    \item \textbf{Generalization:} How well does the predictor extend from training data to unseen samples?
+\end{itemize}
+
+\paragraph{Perceptron Algorithm}
+The perceptron iteratively updates a weight vector $w \in \mathbb{R}^d$:
+\begin{itemize}
+    \item Initialize $w^{(0)} = 0$.
+    \item For $t = 0, 1, 2, \ldots$:
+    \begin{itemize}
+        \item Select $i \in \{1, \ldots, n\}$ uniformly at random.
+        \item If $y_i \langle w^{(t)}, x_i \rangle < 1$, set
+        \[
+        w^{(t+1)} = w^{(t)} + y_i x_i,
+        \]
+        else $w^{(t+1)} = w^{(t)}$.
+    \end{itemize}
+\end{itemize}
+
+\paragraph{Connection to Empirical Risk Minimization}
+The perceptron update can be viewed as stochastic gradient descent (SGD) on Hinge loss:  
+    $$\min_w \frac{1}{n} \sum_{i=1}^n \ell_{\mathrm{hinge}}(y_i, \langle w, x_i \rangle) + \|w\|_2^2.$$
+\begin{itemize}
+    \item \textbf{Hinge loss:} 
+    \[
+    \ell_{\mathrm{hinge}}(y, \hat{y}) = \max\{1 - y\hat{y}, 0\}, \quad 
+    \]
+    \item \textbf{Squared loss:} 
+    \[
+    \ell_{\mathrm{sq}}(y, \hat{y}) = \tfrac{1}{2}(y - \hat{y})^2, 
+    \]
+    \item \textbf{Logistic loss:} 
+    \[
+    \ell_{\mathrm{log}}(y, \hat{y}) = 
+    \begin{cases}
+        -\log(\sigma(\hat{y})), & y=1, \\
+        -\log(1-\sigma(\hat{y})), & y=-1,
+    \end{cases}
+    \]
+    where $\sigma(z) = \tfrac{1}{1+e^{-z}}$ is the sigmoid.
+\end{itemize}
+
+\paragraph{Margin Analysis}
+\begin{itemize}
+    \item For $w \in \mathbb{R}^d$, define the \emph{margin} on dataset $S$ as
+\[
+\gamma(S, w) = \min_{1 \leq i \leq n} \frac{| \langle x_i, w \rangle |}{\|w\|}, 
+\qquad \gamma(S) = \max_w \gamma(S, w).
+\]
+    \item Let $D(S) = \max_{1 \leq i \leq n} \|x_i\|$.  
+    \item Theorem: If $S$ is linearly separable, the perceptron algorithm makes at most $\frac{\big(2 + D(S)^2\big)}{\,\gamma(S)^2}$ margin mistakes.
+    \item \emph{Proof sketch.} Expanding the update yields
+\[
+\|w^{(t+1)}\|^2 = \|w^{(t)} + y_i x_i\|^2 
+= \|w^{(t)}\|^2 + 2y_i \langle w^{(t)}, x_i \rangle + \|x_i\|^2
+\le \|w^{(t)}\|^2 + 2 + D(S)^2.
+\]
+Meanwhile, progress in the margin direction ensures
+\[
+\langle w^\ast, w^{(t+1)} - w^{(t)} \rangle \ge \gamma(S),
+\]
+for an optimal separator $w^\ast$, leading to the stated bound.
+
+\end{itemize}
+
+\paragraph{Generalization Bound}
+Let $S_n$ be $n$ i.i.d.\ samples from a distribution $\mathcal{D}$ admitting a perfect linear separator.  
+Let $w(S_n)$ denote the perceptron’s output after convergence on $S_n$, and let $(X,Y) \sim \mathcal{D}$ be independent of $S_n$.  
+Then
+\[
+    P\!\left[Y w(S_n)^T X < 1 \right] \leq \mathbb{E}[\frac{2 + D(S_{n+1})^2}{(n+1)\,\gamma(S_{n+1})^2}],
+\]
+where $D(S_{n+1})$ and $\gamma(S_{n+1})$ are defined analogously on $S_{n+1} = S_n \cup \{(X,Y)\}$.
+
+
+\section{Representation}
+\begin{itemize}
+    \item \textbf{Lifting functions:} Transform a given set of features into a more expressive feature space.
+    \item \textbf{Common strategies:}
+    \begin{itemize}
+        \item \textbf{Template matching:} For example, $x_0 = \max\{v^\top x, 0\}$, which can be interpreted as a sliding window that activates when a feature satisfies certain conditions.
+        \item \textbf{Polynomial features:} In $d$ dimensions with maximum degree $p$, the number of monomial coefficients is $\binom{d+p}{p}$.
+    \end{itemize}
+    \item \textbf{Dimensionality:} How high must the lifted dimension be?  
+
+    To gain intuition, stack $n$ data points $x_1, \ldots, x_n \in \mathbb{R}^d$ into a matrix $X \in \mathbb{R}^{n \times d}$, where each row corresponds to a sample. Predictions over the dataset can then be expressed as
+    \[
+    \hat{y} = Xw.
+    \]
+    If the $x_i$ are linearly independent and $d \geq n$, then any prediction vector $y$ can be realized by an appropriate weight vector $w$. Thus, feature design often aims to lift data into sufficiently high-dimensional spaces so that the feature matrix $X$ has linearly independent columns, enabling greater expressivity.
+\end{itemize}
+
+
 \end{document}
 
