@@ -14,6 +14,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{bbm}
 \usepackage[colorinlistoftodos]{todonotes}
 % \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \usepackage{enumerate}
@@ -34,7 +35,7 @@
 \tikzstyle{block} = [rectangle, minimum width=3cm, minimum height=3cm, text centered, draw=black]
 \tikzstyle{arrow} = [thick,->,>=stealth]
 
-\title{HW1}
+\title{HW2}
 \author{Kevin Chang}
 
 \newtheorem{definition}{Definition}
@@ -51,251 +52,318 @@
 \maketitle
 
 \section{}
-Let $\xi_i$ be a sequence of independent random variables and $X_n$ a function of the first $n$ elements of the sequence.
-Define
-$$\mathbb{E}_k [X_n] := \mathbb{E}[X_n |\xi_1 , \dots, \xi_k ].$$
-
-\paragraph{1.1}
+Let $\Omega$ be a set of $N$ bits, each equal to either $0$ or $1$.
+For a fixed integer $k < N$, sample a sequence $y_1 , \dots , y_{k+1}$ from $\Omega$ uniformly without replacement.
+Define the sample average of the first $k$ elements as
+$$\hat{m}_k = \frac{1}{k} \sum_{i=1}^k y_i.$$
+and define the average of all of the bits as
+$$m_N = \frac{1}{N} \sum_{y\in\Omega}^N y.$$
 Show that
-$$\mathbb{E}[(X_n - \mathbb{E}[X_n])^2]= \sum_{k=1}^n \mathbb{E}[(\mathbb{E}_k [X_n ] - \mathbb{E}_{k-1} [X_n ])^2].$$
+$$\mathbb{E}[(\hat{m}_k - y_{k+1})^2] = \frac{N}{N-1} \times \frac{k+1}{k} \times m_N (1 - m_N)$$
 
+\paragraph{Proof.}
+For $i \neq j$ under simple random sampling without replacement:
+\[
+\mathbb{E}[y_i] = m_N, 
+\qquad 
+\mathrm{Var}(y_i) = m_N(1-m_N), 
+\qquad 
+\]
 \begin{itemize}
-    \item \emph{Answer:}
-    \item Observe that $\mathbb{E}_n[X_n] = X_n$ and $\mathbb{E}_0[X_n] = \mathbb{E}[X_n]$.
-    \item Then,
-    \begin{align*}
-        \mathbb{E}\!\left[(X_n - \mathbb{E}[X_n])^2\right] 
-        &= \mathbb{E}\!\left[\left(\sum_{k=1}^n \big(\mathbb{E}_k[X_n] - \mathbb{E}_{k-1}[X_n]\big)\right)^2\right] \\
-        &= \mathbb{E}\!\Big[\sum_{k=1}^n \big(\mathbb{E}_k[X_n] - \mathbb{E}_{k-1}[X_n]\big)^2 \\
-        & \quad + 2 \sum_{1 \leq k_1 < k_2 \leq n} \big(\mathbb{E}_{k_1}[X_n] - \mathbb{E}_{k_1-1}[X_n]\big)\big(\mathbb{E}_{k_2}[X_n] - \mathbb{E}_{k_2-1}[X_n]\big)\Big].
-    \end{align*}
-    \item For the cross terms: since
-    \[
-        \mathbb{E}\!\left[\mathbb{E}_{k_1}[X_n] - \mathbb{E}_{k_1-1}[X_n] \,\right] = 0,
-    \]
-    it follows that
-    \[
-        \mathbb{E}\!\left[\big(\mathbb{E}_{k_1}[X_n] - \mathbb{E}_{k_1-1}[X_n]\big)\big(\mathbb{E}_{k_2}[X_n] - \mathbb{E}_{k_2-1}[X_n]\big)\right] = 0
-        \qquad \text{for all } k_1 < k_2.
-    \]
-    \item Hence,
-    \[
-        \mathbb{E}\!\left[(X_n - \mathbb{E}[X_n])^2\right]
-        = \sum_{k=1}^n \mathbb{E}\!\left[\big(\mathbb{E}_k[X_n] - \mathbb{E}_{k-1}[X_n]\big)^2\right].
-    \]
+    \item $\mathbb{E}[y_i y_j] = \mathbb{E}[\mathbb{E}[y_i y_j|y_i]] = \mathbb{E}[y_i \frac{M_n N - y_i}{N-1}] =\frac{N m_N^2 - m_N}{N-1}.$
+    \item $\mathrm{Cov}(y_i,y_j) = \mathbb{E}[y_i y_j] - M_n^2 = -\frac{m_N(1-m_N)}{N-1}.$
+    \item $\mathrm{Var}(\hat m_k) = \frac{1}{k^2}\sum_{i=1}^k \sum_{j=1}^k \mathrm{Cov}(y_i,y_j)$ 
+        $= \frac{1}{k^2}M_n(1-M_n)(k - \frac{k(k-1)}{N-1}) = \frac{m_N(1-m_N)}{k}\cdot \frac{N-k}{N-1}.$
+    \item $\mathrm{Cov}(\hat m_k, y_{k+1}) = \frac{1}{k}\sum_{i=1}^k \mathrm{Cov}(y_i, y_{k+1}) = -\frac{m_N(1-m_N)}{N-1}.$
 \end{itemize}
 
-\paragraph{1.2}
-Suppose there is a constant B such that $|\mathbb{E}_k [X_n ] - \mathbb{E}_{k-1} [X_n ]| \leq B$ with probability 1.
-Prove that
-$$\lim_{n \rightarrow \infty} \frac{1}{n^2} \mathbb{E}[(X_n - \mathbb{E}[X_n ])^2 ] = 0$$
-
-\begin{itemize}
-    \item \emph{Answer:}
-    \begin{align*}
-        \lim_{n \rightarrow \infty}\mathbb{E}\!\left[(X_n - \mathbb{E}[X_n])^2\right]
-        &= \lim_{n \rightarrow \infty}\sum_{k=1}^n \mathbb{E}[(\mathbb{E}_k [X_n ] - \mathbb{E}_{k-1} [X_n ])^2] \\
-        \leq \lim_{n \rightarrow \infty}\frac{nB^2}{n^2} = 0 \\
-    \end{align*}
-\end{itemize}
-
-\paragraph{1.3}
-Let $Z_i$ be a sequence of independent, identically distributed random variables that take values in $[0, 1]$.
-Let $\mu = \mathbb{E}[Z_1 ]$ Use the above parts to prove
-$$\lim_{n \rightarrow \infty} \mathbb{E}\left[\left(\frac{1}{n} \sum_{i=1}^n Z_i - \mu\right)^2\right]  = 0$$
-
-\begin{itemize}
-    \item $X_n =  \sum_{i = 1}^n Z_i - n \mathbb{E}[Z_i]$
-    \item $\mathbb{E}_k[X_n] = \mathbb{E}[X_n|Z_1, \dots, Z_k]$
-    \item $|\mathbb{E}_k[X_n] - \mathbb{E}_{k-1}[X_n]| = |Z_k - \mathbb{E}[Z_k]|\leq 2$ with probability 1
-$$\lim_{n \rightarrow \infty} \mathbb{E}\left[\left(\frac{1}{n} \sum_{i=1}^n Z_i - \mu\right)^2\right] = \lim_{n \rightarrow \infty} \mathbb{E}[(X_n)^2] 
-= \lim_{n \rightarrow \infty}\mathbb{E}[(X_n - \mathbb{E}[X_n])^2]$$
-$$= \lim_{n \rightarrow \infty}\sum_{k=1}^n \mathbb{E}[(\mathbb{E}_k [X_n ] - \mathbb{E}_{k-1} [X_n ])^2]=0$$
-\end{itemize}
-\section{}
-An ordering of the the set $\{1, . . . , T \}$ is a sequence of integers $\{\sigma_1 , . . . \sigma_T \}$ where every number between $1$ and $T$ appears exactly once.
-A sequence of random variables $x_1 , . . . , x_T$ is called exchangeable if the distribution of $x_1 , . . . , x_T$ is equal to the distribution $x_{\sigma_1}, . . . , x_{\sigma_T}$ for any ordering of the indices.
-\paragraph{2.1}
-Show that a sequence is exchangeable if and only if for any $i$ and $j$, the distribution is the same when elements $x_i$ and $x_j$ are swapped.
-\begin{itemize}
-    \item[$(\Rightarrow)$] If $(x_1,\dots,x_T)$ is exchangeable, then for any indices $i$ and $j$, swapping $x_i$ and $x_j$ does not change the joint distribution.
-    \item[$(\Leftarrow)$] Conversely, if every pair $(x_i, x_j)$ can be swapped without changing the joint distribution, then the sequences $(x_1,\dots,x_T)$ and $(x_{\sigma_1},\dots,x_{\sigma_T})$ have the same distribution. Hence, the sequence is exchangeable.
-\end{itemize}
-
-\paragraph{2.2}
-Show that any iid sequence is exchangeable.
-
-If $x_1,\dots,x_T$ are iid then they share the same distribution.
-\paragraph{2.3}
-Show that for any indices $i$ and $j$, $E[x_j ] = E[x_i ]$.
-
-By 2.1, swapping $i$ and $j$ leaves the joint distribution unchanged.
-Thus $\mathbb{E}[x_i]=\mathbb{E}[x_j]$ for all $i,j$.
-\paragraph{2.4}
-Let’s suppose we want to predict values in an exchangeable sequence.
-Compute the expected mean squared error of using the mean of the first $T - 1$ elements of the sequence to predict the last.
-That is, compute
-$$\mathbb{E}\left[\left(x_T - \frac{1}{T-1}\sum_{t=1}^{T-1}x_t\right)^2\right].$$
-when $x_t$ is an exchangable sequence.
-
-Let 
+Since $\mathbb{E}[\hat m_k] = \mathbb{E}[y_{k+1}] = m_N$, we have
 \[
-\mathbb{E}[x_i] = \mu,\quad \mathrm{Var}(x_i) = \sigma^2,\quad \mathrm{Cov}(x_i, x_j) = c \quad (i \neq j).
+\mathbb{E}\!\left[(\hat m_k - y_{k+1})^2\right] 
+= \mathrm{Var}(\hat m_k - y_{k+1})
+= \mathrm{Var}(\hat m_k) + \mathrm{Var}(y_{k+1}) - 2\,\mathrm{Cov}(\hat m_k,y_{k+1}).
 \]
 
-We want
+Substituting the above expressions yields
 \[
-\mathbb{E}\!\left[\left(x_T - \frac{1}{T-1}\sum_{t=1}^{T-1} x_t\right)^2\right].
+\mathbb{E}\!\left[(\hat m_k - y_{k+1})^2\right]
+= m_N(1-m_N)\left(\frac{N-k}{k(N-1)} + 1 + \frac{2}{N-1}\right)
+= m_N(1-m_N)\cdot \frac{N(k+1)}{k(N-1)}.
 \]
-
-Since $\mathbb{E}[x_T - \frac{1}{T-1}\sum_{t=1}^{T-1} x_t] = 0$, this equals
-\[
-\mathrm{Var}(x_T - \frac{1}{T-1}\sum_{t=1}^{T-1} x_t)
-= \mathrm{Var}(x_T) + \mathrm{Var}(\frac{1}{T-1}\sum_{t=1}^{T-1} x_t) - 2\,\mathrm{Cov}(x_T, \frac{1}{T-1}\sum_{t=1}^{T-1} x_t).
-\]
-
-Now
-\[
-\mathrm{Var}(\frac{1}{T-1}\sum_{t=1}^{T-1} x_t)
-= \frac{1}{(T-1)^2}\Big( (T-1)\sigma^2 + (T-1)(T-2)c \Big)
-= \frac{\sigma^2}{T-1} + \frac{T-2}{T-1}\,c,
-\]
-and
-\[
-\mathrm{Cov}(x_T, \frac{1}{T-1}\sum_{t=1}^{T-1} x_t)
-= \frac{1}{T-1}\sum_{t=1}^{T-1}\mathrm{Cov}(x_T, x_t) = c.
-\]
-
-Hence
-\[
-\mathbb{E}\!\left[\left(x_T - \frac{1}{T-1}\sum_{t=1}^{T-1} x_t\right)^2\right]
-= \sigma^2 + \left( \frac{\sigma^2}{T-1} + \frac{T-2}{T-1}c \right) - 2c
-= \frac{T}{T-1}(\sigma^2 - c).
-\]
-
-
-\section{}
-A symmetric, $n \times n$ matrix $A$ is called positive definite if for all nonzero vectors $x \in \mathbb{R}^n , x^T Ax > 0$.
-We say a function $f : \mathbb{R}^n \rightarrow \mathbb{R}$ has positive curvature if its Hessian matrix, $\nabla^2 f(x)$ is positive definite for all $x$.
-\paragraph{3.1}
-Suppose $f$ has positive curvature. For any vectors $x$ and $z$, we can define a function that maps $\mathbb{R}$ to $\mathbb{R}$ by $g(t) := f (x + tz)$.
-Show the second derivative of $g$ is positive for all $t$.
-
-$$g(t) := f(x + tz)$$
-Then
-\[
-g'(t) = \nabla f(x+tz)^\top z,
-\]
-and differentiating again,
-\[
-g''(t) = z^\top \nabla^2 f(x+tz)\, z.
-\]
-
-Since $\nabla^2 f(y) \succ 0$ for all $y$, the quadratic form satisfies
-\[
-z^\top \nabla^2 f(x+tz)\, z > 0
-\]
-whenever $z \neq 0$. Therefore,
-\[
-g''(t) > 0 \quad \text{for all $t$ and all nonzero $z$.}
-\]
-\paragraph{3.2}
-Suppose f : $\mathbb{R}^n \rightarrow \mathbb{R}$ has positive curvature.
-Let $M$ be a $n \times d$ dimensional full-rank matrix and $v$ be an $n$-dimensional vector.
-Define $h : \mathbb{R}^d \rightarrow \mathbb{R}$ by $g(u) = f (M u + v).$
-Show that $g$ has positive curvature.
-
-By the chain rule,
-\[
-\nabla g(u)=M^{\!\top}\,\nabla f(Mu+v),
-\]
-hence differentiating once more,
-\[
-\nabla^2 g(u)=M^{\!\top}\,\nabla^2 f(Mu+v)\,M.
-\]
-Let \(w\in\mathbb{R}^d\setminus\{0\}\). Since \(M\) has full column rank, \(Mw\neq 0\).
-Because \(\nabla^2 f(Mu+v)\succ 0\),
-\[
-w^{\!\top}\nabla^2 g(u)\,w
-= w^{\!\top} M^{\!\top}\nabla^2 f(Mu+v)\,Mw
-= (Mw)^{\!\top}\nabla^2 f(Mu+v)\,(Mw) \;>\; 0.
-\]
-Therefore \(\nabla^2 g(u)\succ 0\) for all \(u\), so \(g\) has positive curvature. \qed
-\paragraph{3.3}
-Suppose $f$ has positive curvature and $h$ is a real valued function that is monotonically increasing and
-whose derivative is monotonically strictly increasing. Show that the composition function $h \circ f$ , where
-
-$h \circ f (x) = h(f (x))$, has positive curvature.
-$$\nabla (h\circ f)(x) = h'(f(x))\, \nabla f(x).$$
-Differentiating again,
-$$\nabla^2 (h\circ f)(x) = h''(f(x))\, \nabla f(x)\,\nabla f(x)^\top \;+\; h'(f(x))\, \nabla^2 f(x).$$
-
-Now check positive semidefiniteness: for any $v \in \mathbb{R}^n$,
-\[
-v^\top \nabla^2 (h\circ f)(x)\, v
-= h''(f(x))\, (v^\top \nabla f(x))^2 \;+\; h'(f(x))\, v^\top \nabla^2 f(x)\, v.
-\]
-Since $h''(f(x)) \ge 0$, $(v^\top \nabla f(x))^2 \ge 0$, $h'(f(x)) \ge 0$, and $v^\top \nabla^2 f(x)\, v > 0$ (because $f$ is convex), it follows that
-\[
-v^\top \nabla^2 (h\circ f)(x)\, v \; >\; 0 \quad \text{for all } v.
-\]
-
-Thus $\nabla^2 (h\circ f)(x)$ is positive semidefinite for all $x$, and hence $h\circ f$ is convex (has positive curvature).
 \qed
 
 \section{}
-Let $A$ be an $n \times n$ positive definite matrix and let $v$ be a $n$-vector with Euclidean norm 1.
-Define $x_0 = v$ and, for integers $k \geq 1$, set $x_k = Ax_{k-1}.$
-\paragraph{4.1}
-Suppose all of the eigenvalues of $A$ are less than 1.
-Show that $||x_k || \leq \beta^k$ for some number $\beta \in [0, 1]$.
-Here
-$$||z|| = \left( \sum_{k=1}^n z_k^2 \right)^{1/2}.$$
+Let $X$ be a continuous random variable distributed over the closed interval $[0,1]$.
+For label $Y = 0$, $X$ is uniform:
+$$p_{X|Y}(X | Y = 0) = \left\{\begin{array}{ll} 1 & 0 \leq x \leq 1 \\ 0 & \text{otherwise}.  \end{array}\right.$$
+For label $Y = 1$, the conditional pdf of $X$ is as follows:
+$$p_{X|Y}(X | Y = 1) = \left\{\begin{array}{ll} 2x & 0 \leq x \leq 1 \\ 0 & \text{otherwise}.  \end{array}\right.$$
+    \begin{itemize}
+        \item Find the decision rule that minimizes the probability of error.
 
-Assume $A = Q \Omega Q^\top$, where $Q$ is orthogonal and $\Omega = \operatorname{diag}(\lambda_1,\dots,\lambda_n)$ contains the eigenvalues of $A$.
-For any vector $v$,
-\[
-\|x_k\| = \|A^k v\| = \|Q \Omega^k Q^\top v\| = \|\Omega^k (Q^\top v)\|.
-\]
-Since $\|\Omega^k y\|^2 = \sum_{i=1}^n (\lambda_i^k y_i)^2$ and $|\lambda_i| < 1$, it follows that
-\[
-\|x_k\| \;\le\; (\max_i |\lambda_i|)^k \,\|v\|.
-\]
-Setting $\beta := \max_i |\lambda_i| \in [0,1)$, we obtain
-\[
-\|x_k\| \le \|v\|\, \beta^k.
-\]
+            $$\hat{Y}(x) = \mathbbm{1}\!\left\{ 
+            \frac{p(x \mid Y=1)}{p(x \mid Y=0)} 
+            \;\geq\;
+            \frac{p_0 \, \big(\mathit{loss}(1,0) - \mathit{loss}(0,0)\big)}{p_1 \, \big(\mathit{loss}(0,1) - \mathit{loss}(1,1)\big)}
+            \right\} = \mathbbm{1}\!\left\{ 2x \geq \frac{P[Y=0]}{P[Y=1]} \right\}$$
+        \item Find the closed form expression for the operating characteristic of the likelihood ratio test (LRT), i.e., TPR as a function of FPR for the LRT.
+            \begin{itemize}
+                \item $\mathrm{FPR}(t)=\Pr[x\ge \frac{P[Y=0]}{2P[Y=1]}\mid Y=0]=1-\frac{P[Y=0]}{2P[Y=1]}$
+                \item $\mathrm{TPR}(t)=\Pr[x\ge \frac{P[Y=0]}{2P[Y=1]}\mid Y=1]=\int_{\frac{P[Y=0]}{2P[Y=1]}}^1 2x\,dx =1-\Big(\frac{P[Y=0]}{2P[Y=1]}\Big)^2.$
+                \item Closed form:
+                    $$\boxed{\;\mathrm{TPR}=2\,\mathrm{FPR}-\mathrm{FPR}^2,\qquad 0\le \mathrm{FPR}\le 1.\;}$$
+            \end{itemize}
 
-\paragraph{4.2}
-Suppose one of the eigenvalues of $A$ is equal to 2.
-Can the sequence $||x_k||$ converge to zero?
-Explain your answer.
+        \item Suppose we require the TPR to be at least ($1+\epsilon$)FPR, where $\epsilon > 0$ is a fixed constant.
+        Find TPRmax($\epsilon$), the maximal value of TPR that is achievable under this constraint.
 
-Let $v$ have a nonzero component in the eigenspace corresponding to $\lambda=2$. Then
-\[
-x_k = A^k v
-\]
-contains a term proportional to $2^k$, so $\|x_k\|$ grows without bound and cannot converge to $0$.
-
+            \begin{itemize}
+                \item Let $u=\mathrm{FPR}\in[0,1]$. On the LRT ROC we have
+            \[
+            \mathrm{TPR}(u)=2u-u^2.
+            \]
+                \item Impose $\mathrm{TPR}\ge(1+\epsilon)\,\mathrm{FPR}$ with $\epsilon>0$:
+            \[
+            2u-u^2 \;\ge\; (1+\epsilon)u
+            \;\;\Longleftrightarrow\;\;
+            u\big((1-\epsilon)-u\big)\;\ge\;0.
+            \]
+                \item Thus the feasible set is
+            \[
+            \mathcal{U}_\epsilon=
+            \begin{cases}
+            [0,\,1-\epsilon], & 0\le \epsilon\le 1,\\
+            \{0\}, & \epsilon\ge 1.
+            \end{cases}
+            \]
+            Since $\mathrm{TPR}(u)=2u-u^2$ is increasing on $[0,1]$, the maximum over $\mathcal{U}_\epsilon$ occurs at
+            \[
+            u^\star =
+            \begin{cases}
+            1-\epsilon, & 0\le \epsilon\le 1,\\
+            0, & \epsilon\ge 1.
+            \end{cases}
+            \]
+                \item Hence
+            \[
+            \boxed{\;
+            \mathrm{TPR}_{\max}(\epsilon)=
+            \begin{cases}
+            2(1-\epsilon)-(1-\epsilon)^2 \;=\; 1-\epsilon^2, & 0\le \epsilon\le 1,\\[3pt]
+            0, & \epsilon\ge 1.
+            \end{cases}
+            \;}
+            \]
+            \end{itemize}
+    \end{itemize}
 
 \section{}
-Please submit a short (less than 250 words) final project proposal.
-The proposal should describe the project idea as well its connections to the course material.
-This proposal is flexible and can change as the semester continues.
-Choose a topic that is of interest to you and related to your research goals.
-You will submit something about the project along with every problem set, so you need to have an active, but potentially changing, project.
-The proposal should have the format and flow of the abstract of a conference or journal paper.
-This project should have the potential to gather real data to solve some prediction problem.
-Please state your data source and the prediction problem you are interested in studying.
-Teams of 1, 2 or 3 are allowed for these projects. Each project team should submit their information here so we know who is working together on what. All members of a team should include the same proposal in their homework submission.
 
-Wildfires are becoming increasingly severe, posing complex challenges for monitoring and mitigation. Recent approaches employ decentralized multi-drone systems, where each drone operates with limited communication and coordination. In this project, we investigate the reliability of such systems by extending an OpenAI Gym–based drone environment. Specifically, we analyze failure rates in scenarios where multiple drones, operating without inter-drone communication, are deployed to the environment. Our study aims to quantify the trade-offs between decentralization and robustness, providing insights into the design of resilient wildfire-response drone networks.
-
-Collaborators:
+Suppose you have $n$ expert forecasters.
+Each individual forecaster $i \in [n]$ has a known true positive rate and false positive rate (TPRi , FPRi ).
+Define forecaster 0 to be the artificial forecaster that only predicts $y = 0$ and forecaster $n + 1$ to be the artificial forecaster who only predicts $y = 1$.
+Consider the set of forecasts defined by the following procedure:
 \begin{itemize}
-    \item Matthew Low (matthew.low@berkeley.edu)
-    \item Kevin Chang (kevin.cm.chang@berkeley.edu)
+    \item 1. Pick two numbers $i$ and $j$ between $0$ and $n + 1$ (inclusive) and a scalar $p \in [0, 1]$.
+    \item 2. Generate a random number $r$ from the uniform distribution on $[0, 1]$.
+    \item 3. If $r < p$, return the prediction of forecaster $i$. Otherwise, return the prediction of forecaster $j$.
 \end{itemize}
+
+\textbf{Answer:}
+\begin{itemize}
+    \item For a given $t \in [0,1]$, we can tune the randomized forecaster to achieve $\mathrm{TPR}=t$.  
+    The expected TPR is
+    \[
+    \mathrm{TPR}(p;i,j) = p\cdot \mathrm{TPR}_i + (1-p)\cdot \mathrm{TPR}_j.
+    \]
+    Thus, for any target $t$ satisfying $\min\{\mathrm{TPR}_i,\mathrm{TPR}_j\} \le t \le \max\{\mathrm{TPR}_i,\mathrm{TPR}_j\}$, one may set
+    \[
+    p = \frac{t - \mathrm{TPR}_j}{\mathrm{TPR}_i - \mathrm{TPR}_j},
+    \]
+    which guarantees $\mathrm{TPR}(p;i,j)=t$.  
+    In particular, by mixing the trivial forecasters $0$ (with $\mathrm{TPR}_0=0$) and $n+1$ (with $\mathrm{TPR}_{n+1}=1$), we obtain
+    \[
+    \mathrm{TPR}(p;0,n+1) = p, 
+    \]
+    so any $t \in [0,1]$ is attainable by choosing $p=t$.
+
+    \item The expected FPR is given by
+    \[
+    \mathrm{FPR}(p;i,j) = p\cdot \mathrm{FPR}_i + (1-p)\cdot \mathrm{FPR}_j.
+    \]
+    Hence, randomization between two forecasters yields every point on the line segment connecting their ROC coordinates $(\mathrm{FPR}_i,\mathrm{TPR}_i)$ and $(\mathrm{FPR}_j,\mathrm{TPR}_j)$.  
+    By extension, the entire family of randomized forecasters spans the \emph{convex hull} of all ROC points.  
+    In particular, by mixing forecasters $0$ and $n+1$, we can obtain every point on the diagonal $\mathrm{TPR}=\mathrm{FPR}$ of the ROC plane.
+\end{itemize}
+
+\section{}
+In this problem, we consider an automated resume screening tool which is used by a company to sort candidates based on whether or not they are predicted to be invited for an on site interview after an initial phone screen.
+Let the random variable $X$ denote the features of a candidate’s application and $Y$ denote whether a candidate is invited for an on site interview, where $Y = 1$ indicates that an individual was invited.
+\begin{itemize}
+    \item  Suppose that there are many qualified individuals looking for jobs and that paying recruiters to call applicants is expensive.
+        As a result, it is comparatively half as costly for the company to miss a candidate who would have been invited on site than it is to spend time calling an individual who is not invited for an interview (i.e. for some $\alpha > 0, C_{10} = \alpha, C_{01} = \frac{\alpha}{2}$ , and other costs are zero).
+        Show that the company’s optimal decision rule for resume screening has the form $s(x) = \mathbb{E}[Y |X = x] \geq t$, and find the value of $t$.
+
+        $$\begin{aligned}
+R(1\mid x) &= C_{10}\,\Pr(Y=0\mid X=x)=\alpha\,[1-s(x)],\\
+R(0\mid x) &= C_{01}\,\Pr(Y=1\mid X=x)=\frac{\alpha}{2}\,s(x),
+\end{aligned}$$
+where $s(x)=\Pr(Y=1\mid X=x)=\mathbb{E}[Y\mid X=x]$.
+
+Choose $\hat Y=1$ iff $R(1\mid x)\le R(0\mid x)$, i.e.,
+\[
+\alpha\,[1-s(x)] \;\le\; \frac{\alpha}{2}\,s(x)
+\;\Longleftrightarrow\;
+1-s(x)\le \frac{s(x)}{2}
+\;\Longleftrightarrow\;
+s(x)\ge \frac{2}{3}.
+\]
+
+    \item Now suppose that unemployment has gone down, and there are no longer many qualified candidates looking for jobs.
+        As a result, it is instead twice as costly to miss good candidates than it is to call ones who are not invited for an interview (i.e. for some $\beta > 0, C_{10} = \beta, C_{01} = 2\beta$, and other costs are zero).
+        How does the optimal decision rule change?
+        $$\begin{aligned}
+R(1\mid x) &= C_{10}\,\Pr(Y=0\mid X=x)=\beta\,[1-s(x)],\\
+R(0\mid x) &= C_{01}\,\Pr(Y=1\mid X=x)=2\beta\,s(x),
+\end{aligned}$$
+where $s(x)=\Pr(Y=1\mid X=x)=\mathbb{E}[Y\mid X=x]$.
+
+Choose $\hat Y=1$ iff $R(1\mid x)\le R(0\mid x)$, i.e.,
+\[
+\beta\,[1-s(x)] \;\le\; 2\beta\,s(x)
+\;\Longleftrightarrow\;
+s(x)\ge \frac{1}{3}.
+\]
+
+\end{itemize}
+        Suppose now that some score function $\hat{s}(x)$ has been estimated from historical data, and a threshold rule is applied to assign individuals the screening predictions $\hat{Y} = 1$ for those who will be considered more closely by recruiters and $\hat{Y} = 0$ for those who will not.
+        In the United States, it is illegal to discriminate against job applicants on the basis of religion, and your job is to evaluate this tool with that in mind.
+        Below is a table which shows the predictions and outcomes for applicants split by membership in a minority religious group, with $A = 1$ indicating that an individual is a member of this group and $A = 0$ indicating that they are not.
+        We have data from 500 candidates in the religious group and 5, 000 candidates not in the religious group.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\multicolumn{4}{|c|}{A = 1} \\
+\hline
+ & $Y=0$ & $Y=1$ & Total \\
+\hline
+$\hat{Y}=0$ & 360 & 40 & 400 \\
+\hline
+$\hat{Y}=1$ & 40 & 60 & 100 \\
+\hline
+Total & 400 & 100 & 500 \\
+\hline
+\end{tabular}
+\hspace{1cm}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\multicolumn{4}{|c|}{A = 0} \\
+\hline
+ & $Y=0$ & $Y=1$ & Total \\
+\hline
+$\hat{Y}=0$ & 4050 & 450 & 4500 \\
+\hline
+$\hat{Y}=1$ & 200 & 300 & 500 \\
+\hline
+Total & 4250 & 750 & 5000 \\
+\hline
+\end{tabular}
+\end{table}
+\begin{itemize}
+    \item With membership in the religious group as the sensitive attribute, does this classifier satisfy independence? Does it satisfy sufficiency? Justify your answer.
+        \begin{itemize}
+            \item Independence requires $\hat Y \perp A$, i.e.,
+\[
+\Pr(\hat Y=1\mid A=1)=\Pr(\hat Y=1\mid A=0).
+\]
+From the tables:
+\[
+\Pr(\hat Y=1\mid A=1)=\tfrac{100}{500}=0.20,\qquad
+\Pr(\hat Y=1\mid A=0)=\tfrac{500}{5000}=0.10.
+\]
+These differ, so the classifier \emph{does not} satisfy independence.
+            \item Sufficiency requires $Y \perp A \mid \hat Y$. For a binary predictor, this is equivalent to equal PPV and equal $\Pr(Y=1\mid \hat Y=0)$ across groups:
+\[
+\Pr(Y=1\mid \hat Y=1,A=1)=\tfrac{60}{100}=0.60,\quad
+\Pr(Y=1\mid \hat Y=1,A=0)=\tfrac{300}{500}=0.60;
+\]
+\[
+\Pr(Y=1\mid \hat Y=0,A=1)=\tfrac{40}{400}=0.10,\quad
+\Pr(Y=1\mid \hat Y=0,A=0)=\tfrac{450}{4500}=0.10.
+\]
+These match, hence the classifier \emph{does} satisfy sufficiency.
+        \end{itemize}
+    \item For the criteria that the classifier doesn’t satisfy, propose a group-dependent change to the threshold that results in a classifier that does satisfy the criteria. You do not need to specify exact quantities, rather comparisons with the current threshold. You should not propose a trivial threshold that results in 0\% or 100\% acceptance rates.
+
+        Independence requires $\Pr(\hat Y=1\mid A=1)=\Pr(\hat Y=1\mid A=0)$. 
+        From the tables, current acceptance rates are $0.20$ (group $A=1$) and $0.10$ (group $A=0$), so the classifier violates independence.
+
+        A group-dependent thresholding scheme can enforce independence by equalizing acceptance rates.
+        \textbf{Raise the threshold for $A=1$ and lower it for $A=0$} so that both groups’ acceptance rates meet at an intermediate value (e.g., $\approx 15\%$). This reduces acceptance for $A=1$ and increases it for $A=0$.
+
+    \item Compare and contrast the value of the intervention you suggested in part 4 for the following two circumstances:
+        \begin{itemize}
+            \item You learn that the historical data comes from a hiring manager who is a member of the religious group and has been heard telling fellow members that they have an “in” regardless of their qualifications.
+
+                \textbf{Answer: }If past decisions (the labels $Y$) systematically favored $A=1$ then the observed calibration (sufficiency) is with respect to \emph{biased} labels.
+    In this case, enforcing independence by \emph{raising the threshold for $A=1$ and/or lowering it for $A=0$} can partially counteract historical favoritism and improve equity of opportunity in current screening.
+
+            \item You learn that there is a well regarded religious university nearby that sends the resumes of highly qualified students to the company. Historically, these candidates have highly relevant skill sets and make up a majority of applications from the religious group.
+
+                \textbf{Answer: }If a strong nearby religious university yields a genuinely higher base rate of qualified applicants for $A=1$, then the acceptance-rate gap may reflect real prevalence differences. Forcing independence by \emph{raising $A=1$’s threshold or lowering $A=0$’s} could reduce utility: either excluding many truly qualified $A=1$ candidates (higher false negatives) or including more unqualified $A=0$ candidates (higher false positives).
+    In this scenario, preserving \emph{sufficiency} (calibration within groups) is typically more appropriate, while monitoring group-wise error rates (separation) may also be informative.
+        \end{itemize}
+\end{itemize}
+
+\section{}
+Apply the concepts from the course lectures to your final project.
+\begin{enumerate}[(i)]
+    \item Provide your project abstract. This may have changed from last week, and that’s ok.
+    \item What are the features X and labels Y ? What could they represent? How are they represented?
+    \item Describe the sources of these data. Are they simulated, generated, or retrospective? How costly are they to acquire?
+    \item What are the relevant prediction problems involved with your project? Why are these prediction targets of interest to yourself, to the research community, and to the broader public?
+    \item Why do you believe that the labels can be predicted from the features?
+    \item What metrics might you use to evaluate the quality of your predictions? Do you expect there to be tradeoffs between these associated metrics?
+\end{enumerate}
+
+\begin{enumerate}
+    \item We aim to use the BlueSky air traffic simulator to study and predict air traffic management (ATM) dynamics under high-density conditions. BlueSky is a user-friendly, open-source ATM simulator capable of running scenarios with hundreds of aircraft simultaneously, making it a powerful tool for generating realistic performance and navigation datasets. Our project will investigate predictive modeling tasks such as estimating potential conflicts between aircraft, predicting delays, and evaluating the effects of different traffic management policies. The ultimate objective is to contribute methods for safer and more efficient ATM systems by leveraging simulated data to explore machine learning–based approaches.
+
+\item \textbf{Features $X$ and Labels $Y$.}
+
+\emph{Features ($X$):} Aircraft state vectors (position, altitude, speed, heading), flight plans, separation distances, traffic density measures, and environmental conditions (e.g., wind speed if included). These are represented numerically as time series or structured arrays.
+
+\emph{Labels ($Y$):} Potential conflict events (binary: conflict/no conflict), delay times (continuous), or safety risk scores (categorical/ordinal). These labels represent the prediction targets and are derived from simulation outputs or post-processed conditions.
+
+\item \textbf{Data Sources.}
+The data are primarily \emph{simulated} using BlueSky, which allows for controlled and repeatable generation of ATM scenarios. Because the simulator is open-source and computationally efficient, generating data is relatively low-cost compared to collecting real-world air traffic data, which is proprietary, regulated, and expensive to acquire.
+
+\item \textbf{Prediction Problems.}
+Relevant prediction problems include:
+
+Conflict detection: predicting whether two aircraft will lose safe separation within a time horizon.
+
+Delay prediction: estimating arrival delays under varying traffic conditions.
+
+Policy evaluation: predicting safety or efficiency outcomes under different scheduling or routing policies.
+
+These prediction problems are of interest to:
+\begin{itemize}
+    \item \emph{Ourselves:} to demonstrate the applicability of machine learning methods to ATM.
+    \item \emph{Research community:} to benchmark new algorithms on open, reproducible simulation data.
+    \item \emph{Broader public:} to promote safer, more efficient air travel and better management of crowded airspaces.
+\end{itemize}
+
+\item \textbf{Predictability of Labels from Features.}
+Aircraft states, traffic density, and flight plans are strong predictors of conflicts and delays because ATM dynamics are governed by physical constraints and well-established separation standards. The simulator provides both micro-level (individual aircraft trajectories) and macro-level (airspace-level congestion) features that directly drive the occurrence of conflicts and delays, making prediction feasible and meaningful.
+
+
+\item \textbf{Evaluation Metrics.}  
+Given that our primary prediction task involves classification (e.g., conflict detection), we will evaluate model performance using metrics such as accuracy, precision, recall, F1-score, and ROC-AUC.
+
+\end{enumerate}
 
 \end{document}
 
