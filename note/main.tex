@@ -231,7 +231,7 @@ where $D(S_{n+1})$ and $\gamma(S_{n+1})$ are defined analogously on $S_{n+1} = S
 
 \section{Representation}
 \begin{itemize}
-    \item \textbf{Lifting functions: $\Phi$} Transform a given set of features into a more expressive feature space.
+    \item \textbf{Lifting functions $\Phi(x)$:} Transform a given set of features into a more expressive feature space.
     \item \textbf{Common strategies:}
     \begin{itemize}
         \item \textbf{Template matching:} For example, $x_0 = \max\{v^\top x, 0\}$, which can be interpreted as a sliding window that activates when a feature satisfies certain conditions.
@@ -246,16 +246,74 @@ where $D(S_{n+1})$ and $\gamma(S_{n+1})$ are defined analogously on $S_{n+1} = S
     If the $x_i$ are linearly independent and $d \geq n$, then any prediction vector $y$ can be realized by an appropriate weight vector $w$. Thus, feature design often aims to lift data into sufficiently high-dimensional spaces so that the feature matrix $X$ has linearly independent columns, enabling greater expressivity.
 
     \item \textbf{Kernels}
-        Given a lifting functoin $\Phi$, the kernel function is
+        \begin{itemize}
+            \item Given a lifting functoin $\Phi$, the kernel function is
         \[
         k(x,z) := \Phi(x)^\top \Phi(z),
         \]
         which ensures that for any $x_1,\dots,x_n$, the Gram matrix $K$ with entries $K_{ij}=k(x_i,x_j)$ is positive semidefinite.
 
-        A function $f$ can be expressed as
+            \item A function $f$ can be expressed as
         \[
             f(x) = w^\top \Phi(x) = \sum_{1 \leq i \leq n} \alpha_i \, k(x_i, x).
         \]
+            \item Moreover, if $k_1$ and $k_2$ are kernels, then both $k_1 k_2$ and $k_1 + k_2$ are valid kernels.
+        \end{itemize}
+\end{itemize}
+
+\section{Optimization}
+\begin{itemize}
+    \item \textbf{Gradient Descent.}  
+        \begin{itemize}
+            \item \textit{Procedure.}
+                \begin{itemize}
+                    \item Minimize the empirical loss  
+                    \[
+                        \phi(w) = \frac{1}{n} \sum_{i=1}^n \mathcal{L}(f(x_i, w), y_i).
+                    \]
+                    \item Initialize $w_0 \in \mathbb{R}^d$.
+                    \item For $t = 0, 1, 2, \dots$:  
+                    \[
+                        w_{t+1} = w_t - \alpha_t \frac{1}{n} \sum_{i=1}^n \nabla \mathcal{L}(f(x_i, w), y_i), \quad \alpha_t > 0.
+                    \]
+                \end{itemize}
+
+            \item \textit{Theorem.}
+                \begin{itemize}
+                    \item A vector $v$ is a descent direction for $\phi$ at $w_0$ if  
+                    \[
+                        \phi(w_0 + t v) < \phi(w_0) \quad \text{for some } t > 0.
+                    \]  
+                    \item A point $w^\ast$ is a local minimizer only if $\nabla \phi(w^\ast) = 0$.  
+                    \item If $\phi : \mathbb{R}^d \to \mathbb{R}$ is differentiable and convex, then  
+                    \[
+                        w^\ast \text{ is a global minimizer of } \phi \iff \nabla \phi(w^\ast) = 0.
+                    \]
+                \end{itemize}
+        \end{itemize}
+    \item \textbf{Stochastic Gradient Descent (SGD).}  
+        \begin{itemize}
+            \item \textit{Procedure.}
+                \begin{itemize}
+                    \item Minimize the empirical loss  
+                    \[
+                        \phi(w) = \frac{1}{n} \sum_{i=1}^n \mathcal{L}(f(x_i, w), y_i).
+                    \]
+                    \item Initialize $w_0 \in \mathbb{R}^d$.
+                    \item For $t = 0, 1, 2, \dots$, sample $i \in \{1,\dots,n\}$ uniformly at random and update  
+                    \[
+                        w_{t+1} = w_t - \alpha_t \nabla_w \mathcal{L}(f(x_i, w_t), y_i), 
+                        \quad \alpha_t > 0.
+                    \]
+                \end{itemize}
+
+            \item \textit{Remark.}  
+            SGD reduces to the perceptron algorithm when applied with the hinge-type loss  
+            \[
+                \ell(y, \hat{y}) = \max(-y \hat{y}, 0),
+            \]  
+            using a linear predictor $f(x, w) = w^\top x$.
+        \end{itemize}
 \end{itemize}
 
 
