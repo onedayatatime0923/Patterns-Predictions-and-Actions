@@ -231,7 +231,7 @@ where $D(S_{n+1})$ and $\gamma(S_{n+1})$ are defined analogously on $S_{n+1} = S
 
 \section{Representation}
 \begin{itemize}
-    \item \textbf{Lifting functions:} Transform a given set of features into a more expressive feature space.
+    \item \textbf{Lifting functions: $\Phi$} Transform a given set of features into a more expressive feature space.
     \item \textbf{Common strategies:}
     \begin{itemize}
         \item \textbf{Template matching:} For example, $x_0 = \max\{v^\top x, 0\}$, which can be interpreted as a sliding window that activates when a feature satisfies certain conditions.
@@ -244,6 +244,18 @@ where $D(S_{n+1})$ and $\gamma(S_{n+1})$ are defined analogously on $S_{n+1} = S
     \hat{y} = Xw.
     \]
     If the $x_i$ are linearly independent and $d \geq n$, then any prediction vector $y$ can be realized by an appropriate weight vector $w$. Thus, feature design often aims to lift data into sufficiently high-dimensional spaces so that the feature matrix $X$ has linearly independent columns, enabling greater expressivity.
+
+    \item \textbf{Kernels}
+        Given a lifting functoin $\Phi$, the kernel function is
+        \[
+        k(x,z) := \Phi(x)^\top \Phi(z),
+        \]
+        which ensures that for any $x_1,\dots,x_n$, the Gram matrix $K$ with entries $K_{ij}=k(x_i,x_j)$ is positive semidefinite.
+
+        A function $f$ can be expressed as
+        \[
+            f(x) = w^\top \Phi(x) = \sum_{1 \leq i \leq n} \alpha_i \, k(x_i, x).
+        \]
 \end{itemize}
 
 
