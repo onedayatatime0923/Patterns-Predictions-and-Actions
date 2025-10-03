@@ -329,16 +329,17 @@ Apply the concepts from the course lectures to your final project.
 \end{enumerate}
 
 \begin{enumerate}
-    \item We aim to use the BlueSky air traffic simulator to study and predict air traffic management (ATM) dynamics under high-density conditions. BlueSky is a user-friendly, open-source ATM simulator capable of running scenarios with hundreds of aircraft simultaneously, making it a powerful tool for generating realistic performance and navigation datasets. Our project will investigate predictive modeling tasks such as estimating potential conflicts between aircraft, predicting delays, and evaluating the effects of different traffic management policies. The ultimate objective is to contribute methods for safer and more efficient ATM systems by leveraging simulated data to explore machine learning–based approaches.
+    \item We aim to use the BlueSky air traffic simulator to study and predict air traffic management (ATM) dynamics under high-density conditions. BlueSky is an open-source ATM simulator capable of running scenarios with hundreds of aircraft simultaneously, making it a powerful tool for generating realistic performance and navigation datasets. Our project will investigate predictive modeling tasks such as estimating potential conflicts between aircraft, predicting delays, and evaluating the effects of different traffic management policies. The ultimate objective is to contribute methods for safer and more efficient ATM systems by leveraging simulated data to explore machine learning–based approaches. We are especially interested in methods to achieve high-density advanced air mobility (AAM) using compositional, structured air traffic management policies.
 
 \item \textbf{Features $X$ and Labels $Y$.}
 
-\emph{Features ($X$):} Aircraft state vectors (position, altitude, speed, heading), flight plans, separation distances, traffic density measures, and environmental conditions (e.g., wind speed if included). These are represented numerically as time series or structured arrays.
+\emph{Features ($X$):} Aircraft state vectors (position, altitude, speed, heading), flight plans, separation distances, traffic density measures, and environmental conditions (e.g., wind speed if included). These are represented numerically as time series or structured arrays. Current and historical demand for drone delivery or air taxi services are possible features.
 
-\emph{Labels ($Y$):} Potential conflict events (binary: conflict/no conflict), delay times (continuous), or safety risk scores (categorical/ordinal). These labels represent the prediction targets and are derived from simulation outputs or post-processed conditions.
+\emph{Labels ($Y$):} Potential conflict events (binary: conflict/no conflict), delay times (continuous), or safety risk scores (categorical/ordinal). These labels represent the prediction targets and are derived from simulation outputs or post-processed conditions. Future demand of airspace from drone delivery or air taxi services.
 
-\item \textbf{Data Sources.}
-The data are primarily \emph{simulated} using BlueSky, which allows for controlled and repeatable generation of ATM scenarios. Because the simulator is open-source and computationally efficient, generating data is relatively low-cost compared to collecting real-world air traffic data, which is proprietary, regulated, and expensive to acquire.
+
+\item \textbf{Data Sources.} Data Sources. The data are primarily simulated using BlueSky, which allows for controlled and repeatable generation of ATM scenarios. Because the simulator is open-source and computationally efficient, generating data is relatively low-cost compared to collecting real-world air traffic data, which is proprietary, regulated, and expensive to acquire. For traditional aviation, there are many flight records and routes that can be analyzed. However, we anticipate the need to generate data to model the more complex and crowded air space conditions that are imagined in AAM scenarios.
+
 
 \item \textbf{Prediction Problems.}
 Relevant prediction problems include:
@@ -356,12 +357,14 @@ These prediction problems are of interest to:
     \item \emph{Broader public:} to promote safer, more efficient air travel and better management of crowded airspaces.
 \end{itemize}
 
-\item \textbf{Predictability of Labels from Features.}
-Aircraft states, traffic density, and flight plans are strong predictors of conflicts and delays because ATM dynamics are governed by physical constraints and well-established separation standards. The simulator provides both micro-level (individual aircraft trajectories) and macro-level (airspace-level congestion) features that directly drive the occurrence of conflicts and delays, making prediction feasible and meaningful.
+
+\item \textbf{Predictability of Labels from Features.} Aircraft states, traffic density, and flight plans are strong predictors of conflicts and delays because ATM dynamics are governed by physical constraints and well-established separation standards. The simulator provides both micro-level (individual aircraft trajectories) and macro-level (airspace-level congestion) features that directly drive the occurrence of conflicts and delays, making prediction feasible and meaningful. Past demand and routes can inform future demand (e.g., rush hour in road networks).
 
 
 \item \textbf{Evaluation Metrics.}  
-Given that our primary prediction task involves classification (e.g., conflict detection), we will evaluate model performance using metrics such as accuracy, precision, recall, F1-score, and ROC-AUC.
+Given that our primary prediction task involves classification (e.g., conflict detection), we will evaluate model performance using metrics such as accuracy, precision, recall, and F1-score. The exact nature of the evaluation will depend on the final prediction task that we converge to.
+
+
 
 \end{enumerate}
 
