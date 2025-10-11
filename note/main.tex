@@ -313,8 +313,79 @@ where $D(S_{n+1})$ and $\gamma(S_{n+1})$ are defined analogously on $S_{n+1} = S
                 \ell(y, \hat{y}) = \max(-y \hat{y}, 0),
             \]  
             using a linear predictor $f(x, w) = w^\top x$.
+            % \item \textit{Analysis}
+            %     $g_t(w_t, \eta_t) = $ sample value $\nabla_w \mathcal{L}(f(x_i, w_t), y_i)$
+            %
+            % $||g(w, \eta)||\leq B$
+            % $\sum_{s=0}^t \alpha_s \mathcal{L}(f(x_s, w_s), y_s) - \sum_{s=0}^t \alpha_s \mathcal{L}(f(x_s, w_*), y_s) \leq \frac{||w_0 - w_*||^2 + B^2 \sum_{t=0}^T \alpha_t^2}{2 \sum_{t=0}^T \alpha_t^2}
+
+            \item \textit{Analysis.}  
+                \begin{itemize}
+                    \item Assume SGD update rule is given by
+                        $$w_{t+1} = w_t - \alpha_t g_t(w_t; \eta_t),$$
+            ,where \( g_t(w_t, \eta_t) = \nabla_w \mathcal{L}(f(x_t, w_t), y_t) \) is a stochastic gradient computed from a sample \(\eta_t = (x_t, y_t)\).
+                    \item Assume the gradient is bounded:
+                        $$\| g_t(w_t; \eta_t) \| \le B, \quad \forall t.$$
+                    \item We expand the squared norm of the distance to the optimum \( w_* \):
+                        $$ \| w_{t+1} - w_* \|^2
+            = \| w_t - w_* \|^2
+            - 2 \alpha_t \langle g_t(w_t; \eta_t), w_t - w_* \rangle
+            + \alpha_t^2 \| g_t(w_t; \eta_t) \|^2.$$
+                    \item Taking expectations and using the law of iterated expectation gives
+                        $$\mathbb{E}[\langle g_t(w_t; \eta_t), w_t - w_* \rangle] = \mathbb{E}[\langle \nabla \mathcal{L}(w_t), w_t - w_* \rangle].$$
+                    \item Summing from \(t = 0\) to \(T-1\) and rearranging terms yields
+                        $$\sum_{t=0}^{T-1} \alpha_t \mathbb{E}[\langle \nabla \mathcal{L}(w_t), w_t - w_* \rangle]
+            \le \frac{1}{2}\|w_0 - w_*\|^2 + \frac{B^2}{2}\sum_{t=0}^{T-1}\alpha_t^2.
+            $$
+                    \item By convexity of \(\mathcal{L}\),
+                        $$\mathcal{L}(w_t) - \mathcal{L}(w_*) \le \langle \nabla \mathcal{L}(w_t), w_t - w_* \rangle.$$
+                    \item Hence,
+                        $$\sum_{t=0}^{T-1} \alpha_t \mathbb{E}[\mathcal{L}(w_t) - \mathcal{L}(w_*)]
+            \le \frac{\|w_0 - w_*\|^2}{2} + \frac{B^2}{2}\sum_{t=0}^{T-1}\alpha_t^2.$$
+
+
+                    \item Defining the weighted average iterate
+                        $$\tilde{w}_T = \frac{\sum_{t=0}^{T-1}\alpha_t w_t}{\sum_{t=0}^{T-1}\alpha_t},$$
+                    \item and applying convexity again, we obtain the standard SGD convergence bound:
+                        $$ \mathbb{E}[\mathcal{L}(\tilde{w}_T) - \mathcal{L}(w_*)] \le
+                \frac{\|w_0 - w_*\|^2 + B^2 \sum_{t=0}^{T-1}\alpha_t^2} {2 \sum_{t=0}^{T-1}\alpha_t}.$$
+                \end{itemize}
+
         \end{itemize}
 \end{itemize}
+
+\section{Generalization}
+\begin{itemize}
+    \item The goal is to bound the difference between the \emph{empirical risk} $R_S[f]$ (measured on a sample) and the \emph{true risk} $R[f]$ (expected loss under the underlying distribution).
+
+    \item \textbf{Hoeffding’s Inequality.}
+    For independent random variables $Z_1, \dots, Z_n$ bounded in $[a_i, b_i]$,
+    \[
+    P[\bar{Z} - \mathbb{E}[\bar{Z}] \ge t]
+    \le 
+    \exp\!\left(-\frac{2n^2 t^2}{\sum_{i=1}^n (b_i - a_i)^2}\right),
+    \quad
+    \bar{Z} = \tfrac{1}{n}\sum_{i=1}^n Z_i.
+    \]
+    If the loss $\mathcal{L}$ is bounded in $[0,1]$, then for any $f$,
+    \[
+    P[R_S[f] > R[f] + t] \le e^{-2nt^2}.
+    \]
+
+    \item \textbf{Finite Hypothesis Class.}
+    Applying the union bound to a finite hypothesis set $\mathcal{F}$ yields, with probability at least $1 - \delta$,
+    \[
+    |R_S[f] - R[f]|
+    \le
+    \sqrt{\frac{\ln|\mathcal{F}| + \ln(1/\delta)}{2n}},
+    \quad
+    \forall f \in \mathcal{F},
+    \]
+    where $\ln|\mathcal{F}|$ measures the \emph{complexity} of the model family. 
+    The generalization gap thus scales as
+    $\mathcal{O}\!\left(\sqrt{\tfrac{\text{complexity}(\mathcal{F})}{n}}\right)$.
+\end{itemize}
+
 
 
 \end{document}
