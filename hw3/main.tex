@@ -272,6 +272,37 @@ f(x_i) = \sum_{j=1}^n \alpha_j \min\{x_i, x_j\} = y_i,
 so the regression interpolates the data exactly—yielding zero training error.
 \end{enumerate}
 
+\section{}
+In the high-dimensional problems, there are usually an infinite number of possible models that perfectly fit the observed data.
+When a problem has multiple solutions, different optimization algorithms can find entirely different solutions to the same problem.
+Even though all of the solutions perfectly fit the training data, their generalization performance can be vastly different.
+In this problem, we explore this phenomenon for two widely used optimization algorithms: gradient descent and Adam.
+Consider a linear, binary classification problem under the squared loss.
+Let $X \in \mathbb{R}^{n\times d}$ be an $n \times d$ matrix of features, $y \in \{-1, 1\}^n$ be the corresponding vector of labels, and $\theta \in \mathbb{R}^d$ be the parameter vector.
+We wish to minimize the empirical risk
+$$R_S[\theta] = \frac{1}{2} ||X\theta-y||^2_2$$
+Assume that the rows of $X$ are linearly independent and that $d > n$.
+\begin{itemize}
+    \item Prove that there are infinite many $\theta \in \mathbb{R}^d$ such that $R_S [\theta] = 0.$
+    \item Gradient descent generates a sequence of points $\{\theta_k^gd\}$ according to:
+gd
+\thetak+1
+= \thetakgd − αk ∇RS [\thetakgd ] ,
+(2)
+where αk is a fixed sequence of learning rates. Assume the sequence αk is chosen so that gradient
+descent converges to a minimizer of the objective (1). (You don’t need to show how to select αk ).
+Suppose we initialize \theta0gd = 0. Show that gradient descent converges to the minimum Euclidean norm
+solution to X\theta = y.
+3. Rather than use a fixed learning rate, Adam attempts to adapt the learning rate foreach parameter
+using past gradient information. In particular, Adam generates a sequence of points \thetakad according
+to:
+ 
+ad
+ad
+\thetak+1
+= \thetakad − αk Hk−1 ∇RS \thetakad + βk Hk−1 Hk−1 (\thetakad − \thetak−1
+),
+\end{itemize}
 
 \end{document}
 
