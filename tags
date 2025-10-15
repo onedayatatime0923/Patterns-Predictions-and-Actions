@@ -8,3 +8,5 @@
 3.3	hw1/main.tex	/^\\paragraph{3.3}$/;"	P
 4.1	hw1/main.tex	/^\\paragraph{4.1}$/;"	P
 4.2	hw1/main.tex	/^\\paragraph{4.2}$/;"	P
+action	src/test.py	/^    action = np.array([1,1]) # Your agent code here$/;"	v
+env	src/test.py	/^env = gym.make('MergeEnv-v0', render_mode='human')$/;"	v
