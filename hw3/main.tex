@@ -550,16 +550,91 @@ Apply the concepts from the course lectures to your final project.
 \begin{itemize}
     \item Provide your project abstract. You can copy it from the previous homework if you’d like.
         This may have changed from last week, and that’s ok.
+
+We aim to use the BlueSky air traffic simulator to study and predict air traffic management (ATM) dynamics under high-density and partially faulty sensing conditions.
+BlueSky is an open-source simulator capable of running scenarios with hundreds of aircraft simultaneously, making it a powerful platform for generating realistic performance and navigation datasets.
+In this project, we extend the baseline scenario by introducing stochastic sensor-loss events, where drones have a random probability of losing sensor functionality during flight.
+The ultimate objective is to develop and evaluate machine-learning–based predictive models that can detect or anticipate sensor failure and maintain safe and efficient operations in dense advanced air mobility (AAM) environments.
+Our broader motivation is to contribute toward compositional and structured ATM policies that ensure scalability and safety in multi-agent airspaces.
     \item Collect a representative data set of $(X, Y)$ pairs as you described in last week’s homework.
         Describe what the features and labels mean for this prediction problem.
         Describe the geometric invariances of the data (e.g., do you expect it to behave like a sequence or an image? Or something else?)
+
+
+\emph{Features ($X$):}
+Each data sample encodes the \emph{state of a drone or aircraft} at a given simulation time step. 
+Representative features include:
+\[
+X_t = [p_x,\, p_y,\, p_z,\, v,\, \psi,\, d_{\text{sep}},\, n_{\text{local}},\, w,\, h_t],
+\]
+where:
+\begin{itemize}
+    \item $p_x, p_y, p_z$: position coordinates (longitude, latitude, altitude),
+    \item $v$: airspeed,
+    \item $\psi$: heading angle,
+    \item $d_{\text{sep}}$: separation distance to the nearest neighbor,
+    \item $n_{\text{local}}$: local traffic density,
+    \item $f_{\text{plan}}$: flight plan waypoints or intended route,
+    \item $w$: wind speed or environmental disturbance (if modeled),
+    \item $h_t$: recent history window of past states.
+\end{itemize}
+These features are represented numerically as time-series vectors or aggregated feature arrays.
+
+
+\emph{Labels ($Y$):} whether the sensor of the drone is lost.
+
+The target variable indicates whether the drone’s sensor has failed:
+\[
+Y = 
+\begin{cases}
+1, & \text{if the drone loses its sensor at time } t, \\
+0, & \text{otherwise.}
+\end{cases}
+\]
+Thus, the problem is a binary classification task.
+
     \item Find an appropriate vector encoding of $X$ so that you can apply linear classification.
         Describe why this encoding is reasonable for this set of data.
+
+        \begin{itemize}
+            \item \textbf{Baseline (hand-crafted) encoding.}
+
+We encode each drone at time $t$ using a fixed-length window of recent states of length $L$ (simulation steps). 
+Let $s_\tau \in \mathbb{R}^{d_0}$ be the per-step state
+$$s_\tau = [p_x(\tau),\, p_y(\tau),\, p_z(\tau),\, v(\tau),\, \psi(\tau),\, d_{\text{sep}}(\tau),\, n_{\text{local}}(\tau),\, w(\tau)].$$
+We form a flattened feature vector with dynamics- and interaction-aware components:
+{\small $$\tilde{X}_t \;=\;
+\Big[
+\underbrace{s_{t-L+1}\,\|\,\cdots\,\|\,s_t}_{\text{raw history}}
+\;\;\| \;\;
+\underbrace{\Delta s_{t-L+2}\,\|\,\cdots\,\|\,\Delta s_t}_{\text{first differences}}
+\Big] \in \mathbb{R}^{D},
+$$}
+where $\Delta s_\tau := s_\tau - s_{\tau-1}$,
+computed over the window $[t\!-\!L\!+\!1,\,t]$.
+            \item \textbf{LLM-based lift (learned embedding).}
+                To compare against the hand-crafted baseline, we apply a sequence encoder (``LLM'') to obtain a high-dimensional lift
+                \[
+                    \phi_\theta(\tilde{X}_t)\in\mathbb{R}^{d'},\qquad d'\gg D,
+                \]
+                then train a linear classifier on $\phi_\theta(\tilde{X}_t)$.  
+                \emph{Rationale:} A learned lift can linearize complex dependencies (e.g., cumulative disturbance, interaction effects) while keeping the downstream model simple and data-efficient. We will vary $d'$ and regularization to assess the efficiency of embedding extraction versus the baseline.
+        \end{itemize}
+
+
     \item Fit a linear model to this data. You can use whichever software you’d like, but specify the code you used to fit this model. Is the data linearly separable? Why or why not?
+
+A \emph{linear} classifier is required to assess linear separability; a DNN/MLP is \emph{not} linear. 
+We therefore train (i) a logistic-regression model (single affine layer) to test linear separability on $\tilde{X}_t$, and (ii) a shallow 2-layer MLP as a nonlinear baseline. 
+Both use \texttt{BCEWithLogitsLoss}.
+
     \item Find a simple nonlinear lift of the data that is linearly separable.
         Describe the lift in equations or code.
         What is the associated margin? Again, you can use whichever solver you’d like to make the data separable.
         Be creative in constructing your lift so that it is computationally efficient to compute.
+
+
+We design a lightweight sequence encoder (``LLM'') that maps the $L$-step history into a high-dimensional embedding $\phi_\theta(\tilde{X}_t)\in\mathbb{R}^{d'}$ on which a \emph{linear} classifier is trained.
 \end{itemize}
 
 \end{document}
