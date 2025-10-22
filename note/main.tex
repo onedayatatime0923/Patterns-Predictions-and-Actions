@@ -384,6 +384,23 @@ where $D(S_{n+1})$ and $\gamma(S_{n+1})$ are defined analogously on $S_{n+1} = S
     where $\ln|\mathcal{F}|$ measures the \emph{complexity} of the model family. 
     The generalization gap thus scales as
     $\mathcal{O}\!\left(\sqrt{\tfrac{\text{complexity}(\mathcal{F})}{n}}\right)$.
+
+    \item \textbf{Confidence Interval.}
+        \begin{itemize}
+            \item A confidence interval asserts that, with probability at least \(1 - \delta\), a random variable \(Z\) lies within a (possibly random) set \(A\); that is,
+            \[
+            \Pr[\, Z \in A \,] \geq 1 - \delta,
+            \]
+            where both \(Z\) and \(A\) may depend on random quantities.
+        \end{itemize}
+
+    \item \textbf{PAC Learning.}
+        \begin{itemize}
+            \item A learning algorithm is said to be \((\epsilon, \delta)\)-PAC if, with probability at least \(1 - \delta\) over the sampling of the training set \(S\), the expected loss satisfies
+            \[
+            \mathbb{E}[\mathrm{loss}(f_S(x), y) \mid S] \leq \epsilon.
+            \]
+        \end{itemize}
 \end{itemize}
 
 
