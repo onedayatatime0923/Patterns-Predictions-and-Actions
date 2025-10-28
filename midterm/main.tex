@@ -144,9 +144,9 @@ or equivalently,
 
 Since $i_k$ is drawn uniformly,
 \[
-    \boxed{\mathbb{E}[A_k] = I - \eta G, \quad G := \tfrac{1}{n}\sum_{i=1}^n x_{i_k} x_{i_k}^\top.}
+    \boxed{\mathbb{E}[A_k] = I - \eta G, \quad G := \tfrac{1}{n}\sum_{i=1}^n x_i x_i^\top.}
 \]
-Because $\{x_{i_k}\}$ span $\mathbb{R}^d$, $G$ is symmetric positive definite with eigenvalues 
+Because $\{x_i\}$ span $\mathbb{R}^d$, $G$ is symmetric positive definite with eigenvalues 
 $0<\lambda_{\min}\le\lambda_{\max}$.
 
     \item Show that there exists a step size such that
@@ -154,11 +154,11 @@ $0<\lambda_{\min}\le\lambda_{\max}$.
 for some $\beta < 1$.
 
 Taking expectations,
-\[
-\mathbb{E}[w_{k+1}-w_*] = (I - \eta G)\,\mathbb{E}[w_k-w_*]
-\quad\Rightarrow\quad
-\mathbb{E}[w_T-w_*] = (I - \eta G)^T (w_0 - w_*) = -(I - \eta G)^T w_*.
-\]
+$$\mathbb{E}[w_{k+1}-w_*] 
+= \mathbb{E}[\mathbb{E}[w_{k+1}-w_*|w_0, \dots, w_k]]
+= (I - \eta G)\,\mathbb{E}[w_k-w_*]
+\quad\Rightarrow$$
+$$\mathbb{E}[w_T-w_*] = (I - \eta G)^T (w_0 - w_*) = -(I - \eta G)^T w_*.$$
 Hence,
 \[
 \|\mathbb{E}[w_T - w_*]\|
