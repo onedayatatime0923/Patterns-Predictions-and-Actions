@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1761750272.32739 "main.tex" "main.pdf" "main" 1761750273.05968 0
+["pdflatex"] 1761750967.38776 "main.tex" "main.pdf" "main" 1761750968.11655 0
   "/etc/texmf/web2c/texmf.cnf" 1755887942.72444 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/home/kevin/.texlive2023/texmf-var/fonts/pk/ljfour/public/bbm/bbm10.600pk" 1757638163.18249 6964 fcb58268e098f401e285e4fece73e1ac ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -236,8 +236,8 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1755887957.85269 5472669 54eaf61a88b6b7896ebd0dac973cb29c ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1755887996 8214850 38f980f9b13813c33beca896f57f4c66 ""
-  "main.aux" 1761750272.95987 464 1c8bf8534207d61323ebef3dd5119a44 "pdflatex"
-  "main.tex" 1761750270.9599 12276 c53f182d66f06f4802acd1a99b1ff3db ""
+  "main.aux" 1761750968.01526 464 1c8bf8534207d61323ebef3dd5119a44 "pdflatex"
+  "main.tex" 1761750966.73749 12276 0c32747c00fca9972176085ceaa999ba ""
   (generated)
   "main.aux"
   "main.log"
