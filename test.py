@@ -51,6 +51,7 @@ for year in YEARS:
         # Build rolling aggregates (from existing rolling deques that do NOT yet include this week)
         aggregates = []
         for pid, deq in rolling.items():
+            print(deq)
             if len(deq) == 0:
                 continue
             totals = sum_stats(deq)
