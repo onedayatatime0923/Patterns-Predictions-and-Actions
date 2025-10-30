@@ -8,8 +8,21 @@
 3.3	hw1/main.tex	/^\\paragraph{3.3}$/;"	P
 4.1	hw1/main.tex	/^\\paragraph{4.1}$/;"	P
 4.2	hw1/main.tex	/^\\paragraph{4.2}$/;"	P
+STAT_KEYS	test.py	/^STAT_KEYS = ["rushing_yds", "rushing_att", "rushing_tds"]$/;"	v
+TOP_N	test.py	/^TOP_N = 10           # how many players to print per week$/;"	v
+WEEKS	test.py	/^WEEKS = range(1, 18) # regular season; adjust as needed$/;"	v
+WINDOW	test.py	/^WINDOW = 10          # number of previous weeks to aggregate$/;"	v
+YEARS	test.py	/^YEARS = [2019]       # can be a list, e.g., [2018, 2019]$/;"	v
 action	src/test.py	/^    action = np.array([0,0]) # Your agent code here$/;"	v
+aggregates	test.py	/^        aggregates = []$/;"	v
 env	src/test.py	/^env = gym.make('MergeEnv-v0', render_mode='human')$/;"	v
-games	test.py	/^games = nflgame.games(2019, week=1)$/;"	v
-msg	test.py	/^        msg = '%s %d carries for %d yards and %d TDs'$/;"	v
-players	test.py	/^    players = nflgame.combine_game_stats([g])$/;"	v
+games	test.py	/^        games = nflgame.games(year, week=week)$/;"	v
+id_to_meta	test.py	/^id_to_meta = {}$/;"	v
+pid	test.py	/^            pid = player_key(p)$/;"	v
+player_key	test.py	/^def player_key(p):$/;"	f
+player_name_team	test.py	/^def player_name_team(p):$/;"	f
+players	test.py	/^        players = nflgame.combine_game_stats(games)$/;"	v
+rolling	test.py	/^rolling = defaultdict(lambda: deque(maxlen=WINDOW))$/;"	v
+stat_line	test.py	/^            stat_line = {k: int(getattr(p, k, 0) or 0) for k in STAT_KEYS}$/;"	v
+sum_stats	test.py	/^def sum_stats(deq):$/;"	f
+totals	test.py	/^            totals = sum_stats(deq)$/;"	v
