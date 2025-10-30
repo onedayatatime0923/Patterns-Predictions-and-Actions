@@ -10,3 +10,6 @@
 4.2	hw1/main.tex	/^\\paragraph{4.2}$/;"	P
 action	src/test.py	/^    action = np.array([0,0]) # Your agent code here$/;"	v
 env	src/test.py	/^env = gym.make('MergeEnv-v0', render_mode='human')$/;"	v
+games	test.py	/^games = nflgame.games(2019, week=1)$/;"	v
+msg	test.py	/^        msg = '%s %d carries for %d yards and %d TDs'$/;"	v
+players	test.py	/^    players = nflgame.combine_game_stats([g])$/;"	v
