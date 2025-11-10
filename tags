@@ -8,54 +8,5 @@
 3.3	hw1/main.tex	/^\\paragraph{3.3}$/;"	P
 4.1	hw1/main.tex	/^\\paragraph{4.1}$/;"	P
 4.2	hw1/main.tex	/^\\paragraph{4.2}$/;"	P
-BATCH_SIZE	test.py	/^BATCH_SIZE = 256$/;"	v
-DEVICE	test.py	/^DEVICE = "cuda" if torch.cuda.is_available() else "cpu"$/;"	v
-EPOCHS	test.py	/^EPOCHS = 10$/;"	v
-LABEL_KEY	test.py	/^LABEL_KEY = "rushing_yds"$/;"	v
-LR	test.py	/^LR = 1e-3$/;"	v
-MLP	test.py	/^class MLP(nn.Module):$/;"	c
-PlayerWeekDataset	test.py	/^class PlayerWeekDataset(Dataset):$/;"	c
-SEED	test.py	/^SEED = 42$/;"	v
-STAT_KEYS	test.py	/^STAT_KEYS = [$/;"	v
-VAL_SPLIT	test.py	/^VAL_SPLIT = 0.2$/;"	v
-WEEKS	test.py	/^WEEKS = list(range(1, 18))    # Regular season weeks$/;"	v
-WINDOW	test.py	/^WINDOW = 10                   # Past weeks to aggregate as features$/;"	v
-X	test.py	/^X = np.stack(X_rows) if len(X_rows) else np.zeros((0, len(STAT_KEYS)), dtype=np.float32)$/;"	v
-X_rows	test.py	/^X_rows = []$/;"	v
-YEARS	test.py	/^YEARS = [2018, 2019]          # You can extend this list (e.g., [2015, 2016, 2017, 2018, 2019])$/;"	v
-__getitem__	test.py	/^    def __getitem__(self, idx):$/;"	m	class:PlayerWeekDataset	file:
-__init__	test.py	/^    def __init__(self, features, labels):$/;"	m	class:PlayerWeekDataset
-__init__	test.py	/^    def __init__(self, in_dim):$/;"	m	class:MLP
-__len__	test.py	/^    def __len__(self):$/;"	m	class:PlayerWeekDataset	file:
 action	src/test.py	/^    action = np.array([0,0]) # Your agent code here$/;"	v
-agg_stats	test.py	/^def agg_stats(deq, keys):$/;"	f
-criterion	test.py	/^criterion = nn.MSELoss()$/;"	v
-current_label_from_player	test.py	/^def current_label_from_player(p):$/;"	f
 env	src/test.py	/^env = gym.make('MergeEnv-v0', render_mode='human')$/;"	v
-evaluate	test.py	/^def evaluate(loader):$/;"	f
-forward	test.py	/^    def forward(self, x):$/;"	m	class:MLP
-idxs	test.py	/^idxs = np.arange(n)$/;"	v
-loss	test.py	/^        loss = criterion(preds, yb)$/;"	v
-model	test.py	/^model = MLP(X.shape[1]).to(DEVICE)$/;"	v
-n	test.py	/^n = len(X)$/;"	v
-optimizer	test.py	/^optimizer = torch.optim.Adam(model.parameters(), lr=LR)$/;"	v
-player_key	test.py	/^def player_key(p):$/;"	f
-pred	test.py	/^        pred = model(xb.unsqueeze(0).to(DEVICE)).item()$/;"	v
-preds	test.py	/^        preds = model(xb)$/;"	v
-rolling	test.py	/^rolling = defaultdict(lambda: deque(maxlen=WINDOW))$/;"	v
-set_seed	test.py	/^def set_seed(seed=SEED):$/;"	f
-stat_line_from_player	test.py	/^def stat_line_from_player(p, keys):$/;"	f
-to_feature_vec	test.py	/^def to_feature_vec(agg_dict, keys):$/;"	f
-tr_loss	test.py	/^    tr_loss = evaluate(train_loader)$/;"	v
-train_ds	test.py	/^train_ds = PlayerWeekDataset(X[train_idx], y[train_idx])$/;"	v
-train_idx	test.py	/^train_idx = idxs[val_n:]$/;"	v
-train_loader	test.py	/^train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True, drop_last=False)$/;"	v
-va_loss	test.py	/^    va_loss = evaluate(val_loader)$/;"	v
-val_ds	test.py	/^val_ds   = PlayerWeekDataset(X[val_idx],   y[val_idx])$/;"	v
-val_idx	test.py	/^val_idx = idxs[:val_n]$/;"	v
-val_loader	test.py	/^val_loader   = DataLoader(val_ds,   batch_size=BATCH_SIZE, shuffle=False, drop_last=False)$/;"	v
-val_n	test.py	/^val_n = int(VAL_SPLIT * n)$/;"	v
-xb	test.py	/^        xb = xb.to(DEVICE)$/;"	v
-y	test.py	/^y = np.array(y_rows, dtype=np.float32)$/;"	v
-y_rows	test.py	/^y_rows = []$/;"	v
-yb	test.py	/^        yb = yb.to(DEVICE)$/;"	v
