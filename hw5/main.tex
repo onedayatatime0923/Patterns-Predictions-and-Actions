@@ -15,6 +15,7 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{bbm}
+\usepackage{centernot}
 \usepackage[colorinlistoftodos]{todonotes}
 % \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \usepackage{enumerate}
@@ -35,7 +36,7 @@
 \tikzstyle{block} = [rectangle, minimum width=3cm, minimum height=3cm, text centered, draw=black]
 \tikzstyle{arrow} = [thick,->,>=stealth]
 
-\title{HW3}
+\title{HW5}
 \author{Kevin Chang}
 
 \newtheorem{definition}{Definition}
@@ -52,590 +53,620 @@
 \maketitle
 
 \section{}
-Recall that for a vector $w \in \mathbb{R}^d$ , $\mathcal{H}_w := \{z : <w, z> = 0\}$.
-Let $S = \{(x_i , y_i )\}$ be a set of linearly separable data in $\mathbb{R}^d$ (i.e., $x_i \in \mathbb{R}^d$ and $y_i \in \{-1, 1\}$).
-Define the set $\mathcal{M}_S$ to be the set of all vectors which separate the data with large dot product:
-$$\mathcal{M}_S = \{w : y_i \langle w, x_i \rangle \geq 1 \ \text{for} \ i = 1, . . . , n\}.$$
-\begin{itemize}
-    \item Let $w^*$ denote the element of $\mathcal{M}_S$ with smallest norm.
+Consider a medical decision making setting with a population of patients all suffering from the same health condition.
+The condition, left untreated, causes each individual patient $i$ cost $c_i(0)$.
+A drug for the condition is available, but has known side effects quantified by cost $c_i(1)$, and unknown and probabilistic individual treatment effect quantified by $\tau_i \in \mathbb{R}$, drawn from some unknown distribution with mean $\tau$. 
+If patient $i$ is left untreated, they suffer cost $c_i(0)$; on the other hand, if they are treated with the drug, they suffer cost $ci(1) - \tau_i$.
+\begin{enumerate}[(i)]
+    \item Suppose only the population average treatment effect $\tau := \mathbb{E}[\tau_i]$ is known.
+        What is the treatment decision rule that minimizes expected cost for a new patient $j$?
 
-Show that for any other $w$ that separates the data
-$$\min \mathit{dist}_{1\leq i\leq n}(x_i , \mathcal{H}_w ) \leq \min_{1\leq i\leq n} \mathit{dist}(x_i , \mathcal{H}_{w^*}) .$$
-
-\textbf{Proof.}
-For any nonzero $w$, $\operatorname{dist}(x,\mathcal{H}_w)=\frac{|\langle w,x\rangle|}{\|w\|}$.  
-Let $\gamma_w:=\min_i y_i\langle w,x_i\rangle>0$ be the margin of $w$. Then
+For a new patient $j$, the cost when untreated is $c_j(0)$ (deterministic).  
+If treated, the cost is $c_j(1) - \tau_j$, whose expectation is
 \[
-\min_i \operatorname{dist}(x_i,\mathcal{H}_w)
-= \frac{\min_i |\langle w,x_i\rangle|}{\|w\|}
-= \frac{\gamma_w}{\|w\|}.
-\]
-Scale $w$ to $\tilde w:=\frac{w}{\gamma_w}$; then $\tilde w\in\mathcal{M}_S$ and
-$\|\tilde w\|=\frac{\|w\|}{\gamma_w}$. By optimality of $w^*$ on $\mathcal{M}_S$,
-$\|w^*\|\le \|\tilde w\|=\frac{\|w\|}{\gamma_w}$, hence
-\[
-\frac{\gamma_w}{\|w\|}\le \frac{1}{\|w^*\|}
-= \min_i \operatorname{dist}(x_i,\mathcal{H}_{w^*}),
-\]
-where the last equality uses $\min_i y_i\langle w^*,x_i\rangle=1$ (if it were $>1$, rescaling down would contradict minimality of $\|w^*\|$). This proves the claim. \qed
-
-    \item Show that there are real numbers $\alpha_i$ such that $w^* = \sum_{i=1}^n \alpha_i x_i$.
-
-\textbf{Proof.}  
-Suppose, for the sake of contradiction, that $w^*$ cannot be written as a linear combination of the training examples $\{x_i\}$.  
-Then there exists a decomposition
-\[
-w^* = \sum_{i=1}^n \alpha_i x_i + v,
-\]
-where $v$ is orthogonal to all $x_i$, i.e., $\langle v, x_i \rangle = 0$ for all $i$.
-
-Define $w' := \sum_{i=1}^n \alpha_i x_i$.  
-Since $\langle v, x_i \rangle = 0$, we have 
-\[
-y_i \langle w', x_i \rangle = y_i \langle w^*, x_i \rangle \ge 1,
-\]
-which implies $w' \in \mathcal{M}_S$.  
-
-Moreover, $\|w'\| < \|w^*\|$ because $w^* = w' + v$ and $v \neq 0$ adds an orthogonal component, increasing the norm:
-\[
-\|w^*\|^2 = \|w'\|^2 + \|v\|^2 > \|w'\|^2.
-\]
-This contradicts the minimality of $w^*$ as the smallest–norm element in $\mathcal{M}_S$.  
-Hence, such a $v$ cannot exist, and therefore
-\[
-w^* = \sum_{i=1}^n \alpha_i x_i.
-\]
-\qed
-
-    \item Show that the $\alpha_i$ can be chosen so that $y_i \alpha_i$ are all nonnegative.
-
-Define \( \tilde{\alpha}_i := \alpha_i y_i \).
-Then
-\[
-w^* = \sum_{i=1}^n \tilde{\alpha}_i x_i,
-\quad \text{and} \quad
-y_i \tilde{\alpha}_i = y_i^2 \alpha_i = \alpha_i \ge 0.
-\]
-Hence, the coefficients can be chosen so that \( y_i \alpha_i \ge 0 \) for all \( i \).
-\end{itemize}
-
-\section{}
-Let $u$ and $v$ be $D$-dimensional unit vectors. Let $M$ be a random matrix of dimension $d \times D$.
-Each entry of $M$ is generated iid from a normal distribution with mean 0 and variance $1/d$.
-\begin{enumerate}
-    \item Show that $\mathbb{E}[\langle M u, M v\rangle ] = \langle u, v\rangle$.
-
-\textbf{Answer:}
-        $$\mathbb{E}\big[\langle Mu,Mv\rangle\big] = \mathbb{E}\big[u^\top M^\top M v\big]
-= u^\top\,\mathbb{E}[M^\top M]\,v = u^\top I_D v = \langle u,v\rangle.$$
-(We used $\mathbb{E}[M^\top M]=I_D$ since each row of $M$ has covariance $\frac{1}{d} I_D$ and there are $d$ rows.)
-    \item Suppose $d \geq \frac{8}{\epsilon^2}$. Show that with probability at least $1 - e^{-1} - e^{-2}$,
-        $$\langle M u, M v \rangle  \geq \langle u, v \rangle  - \epsilon.$$
-
-\textbf{Answer:}
-Using the polarization identity,
-\[
-\langle Mu,Mv\rangle
-= \tfrac14\!\left(\|M(u+v)\|^2 - \|M(u-v)\|^2\right).
-\]
-Let $z_\pm:=u\pm v$. Then $\|Mz_\pm\|^2=\frac{1}{d}\sum_{j=1}^d g_{j,\pm}^2$ with $g_{j,\pm}\sim\mathcal{N}(0,\|z_\pm\|^2)$ i.i.d., so
-$\frac{\|Mz_\pm\|^2}{\|z_\pm\|^2}$ is the average of $d$ i.i.d.\ $\mathcal{N}(0,1)^2$ variables.
-By the bounds, for any $\varepsilon'>0$,
-\[
-\Pr\!\left[\left|\|Mz_+\|^2-\|z_+\|^2\right|>\varepsilon'\|z_+\|^2\right]\le e^{-d{\varepsilon'}^2/8},
-\]
-\[
-\Pr\!\left[\left|\|Mz_-\|^2-\|z_-\|^2\right|>\varepsilon'\|z_-\|^2\right]\le e^{-d{\varepsilon'}^2/4}.
-\]
-On the intersection of these two events, 
-\[
-\big|\langle Mu,Mv\rangle-\langle u,v\rangle\big|
-=\tfrac14\!\left|\big(\|Mz_+\|^2-\|z_+\|^2\big)-\big(\|Mz_-\|^2-\|z_-\|^2\big)\right|
-\le \varepsilon'.
-\]
-Taking $\varepsilon'=\varepsilon$ and using the union bound gives
-\[
-\Pr\!\left[\langle Mu,Mv\rangle \ge \langle u,v\rangle-\varepsilon\right]
-\ge 1-e^{-d\varepsilon^2/8}-e^{-d\varepsilon^2/4}.
-\]
-If $d\ge 8/\varepsilon^2$, then $e^{-d\varepsilon^2/8}\le e^{-1}$ and $e^{-d\varepsilon^2/4}\le e^{-2}$, hence
-\[
-\Pr\!\left[\langle Mu,Mv\rangle \ge \langle u,v\rangle-\varepsilon\right]\;\ge\; 1-e^{-1}-e^{-2}.
+\mathbb{E}[c_j(1) - \tau_j] = c_j(1) - \tau.
 \]
 
-
-    \item Now let’s apply this to machine learning. Consider a set of $n$ examples in $D$ dimensional space that is linearly separable with margin $y$.
-        That is, there are $n$ examples, $(x_i , y_i )$ with $y_i \in \{-1, 1\}$ and $||x_i || \leq R$, and there is a unit vetor $w$ so that $y_i \langle w, x_i  \rangle  \geq y$ for all $i$.
-
-        Suppose that $$d \geq 32 \frac{R^2}{\gamma^2}\log(4n).$$
-        Show that with probability at least $1/2$, $y_i \langle M w, M x_i  \rangle  \geq \frac{\gamma}{2}$ for all $i$.
-        We can think of the vectors $M x_i$ as embeddings of the original data set in a lower dimensional space.
-        This problem shows a random embedding already preserves much of the linear separability of data.
-        An optimized embedding can do only better.
-
-\textbf{Answer:}
-Assume a linearly separable dataset $\{(x_i,y_i)\}_{i=1}^n$ with $\|x_i\|\le R$, labels $y_i\in\{\pm1\}$,
-and a unit vector $w$ such that $y_i\langle w,x_i\rangle\ge \gamma$ for all $i$.
-Fix $i$ and apply part~(2) with the unit pair $u=w$ and $v=\frac{x_i}{\|x_i\|}$.
-With probability at least $1-e^{-d\varepsilon^2/8}-e^{-d\varepsilon^2/4}$,
+To minimize expected cost, we treat whenever
 \[
-\langle Mw,M(x_i/\|x_i\|)\rangle \;\ge\; \langle w,x_i/\|x_i\|\rangle - \varepsilon.
-\]
-Multiplying by $\|x_i\|$ and then by $y_i$ yields
-\[
-y_i\langle Mw,Mx_i\rangle
-\;\ge\; y_i\langle w,x_i\rangle - \|x_i\|\,\varepsilon
-\;\ge\; \gamma - R\varepsilon.
-\]
-Choose $\varepsilon=\gamma/(2R)$. Then for this $i$,
-\[
-\Pr\!\left[y_i\langle Mw,Mx_i\rangle \ge \gamma/2\right]
-\;\ge\; 1-e^{-d\gamma^2/(32R^2)}-e^{-d\gamma^2/(16R^2)}.
-\]
-If
-\[
-d \;\ge\; 32\,\frac{R^2}{\gamma^2}\,\log(4n),
-\]
-then $e^{-d\gamma^2/(32R^2)}\le \frac{1}{4n}$ and $e^{-d\gamma^2/(16R^2)}\le \frac{1}{4n}$, so for this $i$,
-\[
-\Pr\!\left[y_i\langle Mw,Mx_i\rangle \ge \gamma/2\right]\;\ge\; 1-\frac{1}{2n}.
-\]
-Applying the union bound over all $i=1,\dots,n$,
-\[
-\Pr\!\left[y_i\langle Mw,Mx_i\rangle \ge \gamma/2 \ \text{for all } i\right]
-\;\ge\; 1 - n\cdot\frac{1}{2n}
-\;=\; \frac12.
-\]
-Thus, with probability at least $1/2$, every embedded example maintains margin at least $\gamma/2$ against $Mw$.
-
-\end{enumerate}
-    For parts 2 and 3, you can use the following fact about Gaussian random variables.
-        If $g_1 , \dots, g_k$ are independent Gaussian random variables with mean zero and variance 1, then
-        $$Pr\left[\frac{1}{m}\sum_{i=1}^m g_i^2 \geq 1 + \epsilon\right] \leq exp\left( -\frac{m\epsilon^2}{8}\right)$$
-        $$Pr\left[\frac{1}{m}\sum_{i=1}^m g_i^2 \geq 1 - \epsilon\right] \leq exp\left( -\frac{m\epsilon^2}{4}\right)$$
-
-\section{}
-Consider the function $k : (0, 1) \times (0, 1) \rightarrow \mathbb{R}$ defined by $k(x_1 , x_2 ) = min\{x_1 , x_2\}$.
-\begin{enumerate}
-    \item Prove that $k$ is a valid kernel (Hint: write $k$ as the integral of a product of two simple functions and then prove that its Gram matrices are positive semi-definite).
-
-\textbf{Answer:}
-For $x\in(0,1)$ define the feature map $\phi_x:[0,1]\to\mathbb{R}$ by
-\[
-\phi_x(t):=\mathbf{1}\{t\le x\}.
-\]
-Then
-\[
-k(x_1,x_2)=\int_0^1 \phi_{x_1}(t)\,\phi_{x_2}(t)\,dt
-=\langle \phi_{x_1},\phi_{x_2}\rangle_{L^2[0,1]}.
-\]
-Hence $k$ is an inner-product kernel.
-    \item Now, consider a training set $\{(x_i , y_i )\}_{i=1,\dots,n}$ with $y_i \in \mathbb{R}$ and distinct points $x_i$ in $(0, 1)$.
-        Show that if we ran kernel regression without regularization on this data set, we would obtain zero training error.
-More precisely, find explicit coefficients $\alpha_j$, in terms of the training data, such that for all points $(x_i , y_i)$ in the training set we have
-$$\sum_{j=1}^n \alpha_j \min\{x_j , x_i \} = y_i .$$
-
-\textbf{Answer:}
-Without loss of generality, assume the inputs are sorted:
-\[
-0 < x_1 < x_2 < \cdots < x_n < 1.
-\]
-Define
-\[
-f(x) = \sum_{j=1}^n \alpha_j \min\{x, x_j\}.
-\]
-Then $f$ is continuous and piecewise linear, with slope on each interval $(x_{i-1}, x_i]$ given by
-\[
-f'(x) = \sum_{j:\, x_j \ge x} \alpha_j.
+\tau > c_j(1) - c_j(0).
 \]
 
-We want $f(x_i) = y_i$ for all $i$.  
-To achieve this, define the slopes between adjacent points:
-\[
-\beta_1 = \frac{y_1}{x_1}, \qquad 
-\beta_i = \frac{y_i - y_{i-1}}{x_i - x_{i-1}} \quad \text{for } i = 2, \dots, n.
-\]
-These $\beta_i$ describe the desired piecewise-linear interpolant through $(0,0)$ and $(x_i, y_i)$.
+\textbf{Decision rule:} Treat patient $j$ if $\tau > c_j(1) - c_j(0),$ and do not treat otherwise.
 
-Since $f'(x) = \sum_{j=i}^n \alpha_j = \beta_i$ for $x \in (x_{i-1}, x_i]$,  
-we can recover $\alpha$ from the backward differences:
-\[
-\alpha_i = \beta_i - \beta_{i+1} \quad (i = 1, \dots, n-1), 
-\qquad \alpha_n = \beta_n,
-\]
-where we take $\beta_{n+1} := 0$.
+    \item Suppose that members of the population are parametrized by features $X \in \{-1, 1\}^d$, and in addition to the population average treatment effect $\tau$, the conditional average treatment effects $\tau_x = \mathbb{E}[\tau_i | X_i = x]$ for all $x$ are known.
+        What is the decision rule that minimizes expected cost for a new person $j$ with feature vector $x_j$?
 
-Then, for each $i$,
+For a new patient $j$ with feature vector $x_j$, the cost when untreated is
 \[
-f(x_i) = \sum_{j=1}^n \alpha_j \min\{x_i, x_j\} = y_i,
+C_{\text{untreated}} = c_j(0).
 \]
-so the regression interpolates the data exactly—yielding zero training error.
+
+If treated, the cost is $c_j(1) - \tau_j$, and using the conditional average treatment effect
+\[
+\tau_{x_j} := \mathbb{E}[\tau_i \mid X_i = x_j],
+\]
+the expected treated cost is
+\[
+\mathbb{E}[C_{\text{treated}} \mid X_j = x_j]
+    = c_j(1) - \tau_{x_j}.
+\]
+
+To minimize expected cost, we treat whenever
+\[
+\tau_{x_j} > c_j(1) - c_j(0).
+\]
+
+\textbf{Decision rule:} For a patient $j$ with feature vector $x_j$, treat if $\tau_{x_j} > c_j(1) - c_j(0),$ and do not treat otherwise.
+    \item Suppose instead that we make a prediction for individual $j$ in the form of an interval $(\hat{\tau}_j^{\min} , \hat{\tau}_j^{\max} ) \subset \mathbb{R}$, with the guarantee that
+        $$\mathbb{P}[\tau_j \not \in (\tau_j^{\min} , \tau_j^{\max} )] \leq \epsilon.$$
+Is it possible to design a treatment decision rule for patient $j$ that minimizes the expected cost for $j$?
+If so, give such a rule.
+If not, explain why and design a rule that achieves a different notion of optimality.
+
+We are given an interval prediction $(\hat{\tau}_j^{\min}, \hat{\tau}_j^{\max})$ with coverage guarantee
+\[
+\mathbb{P}\!\left[\tau_j \notin (\hat{\tau}_j^{\min}, \hat{\tau}_j^{\max})\right] \le \epsilon.
+\]
+The untreated cost is $c_j(0)$, while the treated cost is $c_j(1) - \tau_j$.
+
+The interval guarantee does \emph{not} identify the expected value $\mathbb{E}[\tau_j]$, since many distributions of $\tau_j$ are compatible with the same interval.  
+Hence no rule can uniquely minimize the \emph{expected} cost for all distributions consistent with the interval.
+
+A natural alternative is a \emph{robust} (minimax) rule that minimizes the worst-case treated cost over all $\tau_j$ in the interval.  
+The worst-case treated cost is
+\[
+\sup_{\tau_j \in [\hat{\tau}_j^{\min}, \hat{\tau}_j^{\max}]}
+(c_j(1) - \tau_j)
+= c_j(1) - \hat{\tau}_j^{\min}.
+\]
+
+\textbf{Robust decision rule:} Treat patient $j$ if
+\[
+c_j(1) - \hat{\tau}_j^{\min} < c_j(0)
+\quad \Longleftrightarrow \quad
+\hat{\tau}_j^{\min} > c_j(1) - c_j(0),
+\]
+and do not treat otherwise.
+
+    \item In words, describe the meaning of optimality for the following scenarios.
+        That is, state the source(s) of randomness, and the degree to which a guarantee holds for a particular person $j$.
+        \begin{enumerate}[(a)]
+            \item Scenario described in Part 1.
+
+    The only randomness comes from the unknown treatment effect $\tau_j$, of which only the population mean $\tau$ is known.  
+    Optimality means minimizing the \emph{expected} cost for patient $j$, where the expectation is taken over the population distribution of $\tau_i$.
+
+            \item Scenario described in Part 2.
+
+    Randomness again arises from $\tau_j$, but we now know the conditional mean $\tau_{x_j}$ given the patient's features.  
+    Optimality means minimizing the \emph{expected} cost conditional on $X_j = x_j$, i.e., on average over all patients with the same feature vector.
+            \item Scenario described in Part 3, where the marginal distribution of $\tau_i$ over the entire population is known, and the prediction interval $(\hat{\tau}_j^{\min} , \hat{\tau}_j^{\max} )$) is constructed with this information about the distribution.
+
+    The interval $(\hat{\tau}_j^{\min}, \hat{\tau}_j^{\max})$ is constructed so that it contains $\tau_j$ with probability at least $1-\epsilon$ under the known marginal distribution of treatment effects.  
+    However, the interval does not identify the mean of $\tau_j$, so expected-cost minimization is not well-defined.  
+    Optimality instead refers to minimizing the \emph{worst-case} cost over all $\tau_j$ in the high-probability interval.
+            \item Scenario described in Part 3, where the prediction interval $(\hat{\tau}_j^{\min} , \hat{\tau}_j^{\max} )$ is constructed by post-processing a point predictor for $\tau_j$ with the standard split conformal prediction procedure.
+
+    The interval is constructed via split conformal prediction, which guarantees marginal coverage  
+    $$\mathbb{P}(\tau_j \in (\hat{\tau}_j^{\min}, \hat{\tau}_j^{\max})) \ge 1-\epsilon.$$
+    As in (c), the mean is not identified, so optimality is defined in a \emph{minimax} sense--minimizing the worst-case cost over all $\tau_j$ in the conformal prediction interval.
+        \end{enumerate}
 \end{enumerate}
 
 \section{}
-In the high-dimensional problems, there are usually an infinite number of possible models that perfectly fit the observed data.
-When a problem has multiple solutions, different optimization algorithms can find entirely different solutions to the same problem.
-Even though all of the solutions perfectly fit the training data, their generalization performance can be vastly different.
-In this problem, we explore this phenomenon for two widely used optimization algorithms: gradient descent and Adam.
-Consider a linear, binary classification problem under the squared loss.
-Let $X \in \mathbb{R}^{n\times d}$ be an $n \times d$ matrix of features, $y \in \{-1, 1\}^n$ be the corresponding vector of labels, and $\theta \in \mathbb{R}^d$ be the parameter vector.
-We wish to minimize the empirical risk
-\begin{equation}\label{eq}
-R_S[\theta] = \frac{1}{2} ||X\theta-y||^2_2
-\end{equation}
-Assume that the rows of $X$ are linearly independent and that $d > n$.
-\begin{itemize}
-    \item Prove that there are infinite many $\theta \in \mathbb{R}^d$ such that $R_S [\theta] = 0.$
+Consider a randomized trial with $n$ units.
+Let $a_i \in \{0, 1\}$ denote the action taken on unit $i \in [n]$.
+Let $y_i(j) \in \{0, 1\}$ denote the potential outcome for unit $i$ when the action is $j$.
+Recall that the average treatment effect (ATE) is the quantity
+$$\mathit{ATE} = \frac{1}{n} \sum_{i=1}^n y_i(1) - y_i(0)$$
+\begin{enumerate}
+    \item Suppose $n$ is even. 
+        Assume that half of the units are selected uniformly at random and assigned action 1, and the other half are assigned action 0.
+        Prove that the Horvitz–Thompson estimator,
+        $$\hat{\mathit{ATE}} = \frac{2}{n} \sum_{\{i : a_i = 1\}} y_i(1) - \frac{2}{n} \sum_{\{j: a_j = 0\}}y_j(0),$$
+is unbiased.
+What is its variance?
 
-Since the rows of $X \in \mathbb{R}^{n \times d}$ are linearly independent and $d > n$, 
-we have $\mathrm{rank}(X) = n$. Hence, the $n \times n$ matrix $XX^\top$ is invertible.
-
-\begin{itemize}
-    \item \textbf{Existence of one interpolating solution.}
-    
-    Define
-    \[
-    \theta_0 = X^\top (XX^\top)^{-1} y.
-    \]
-    Then
-    \[
-    X\theta_0 = X X^\top (XX^\top)^{-1} y = y,
-    \]
-    which implies
-    \[
-    R_S[\theta_0] = \frac{1}{2}\|X\theta_0 - y\|_2^2 = 0.
-    \]
-    Thus, $\theta_0$ achieves zero training error.
-
-    \item \textbf{Characterization of all interpolating solutions.}
-    
-    Suppose $\theta$ satisfies $R_S[\theta] = 0$. Then $X\theta = y$.  
-    Subtracting the equation $X\theta_0 = y$, we obtain
-    \[
-    X(\theta - \theta_0) = 0.
-    \]
-    Hence, $\theta - \theta_0 \in \ker(X)$, and every such $\theta$ can be written as
-    \[
-    \theta = \theta_0 + v, \qquad v \in \ker(X).
-    \]
-    Because $\mathrm{rank}(X) = n < d$, the nullspace $\ker(X)$ has dimension $d - n \ge 1$, 
-    implying there are infinitely many distinct $\theta$ satisfying $R_S[\theta] = 0$.
-\end{itemize}
-    \item Gradient descent generates a sequence of points $\{\theta_k^gd\}$ according to:
-        $$\theta_{k+1}^{gd} = \theta_{k}^{gd} - \alpha_k \nabla R_S [\theta_k^{gd}],$$
-where $\alpha_k$ is a fixed sequence of learning rates.
-Assume the sequence $\alpha_k$ is chosen so that gradient descent converges to a minimizer of the objective \eqref{eq}. (You don’t need to show how to select $\alpha_k$).
-Suppose we initialize $\theta_0^{gd} = 0$.
-Show that gradient descent converges to the minimum Euclidean norm solution to $X\theta = y$.
-
-\textbf{Answer:}
-
-Consider gradient descent on $R_S(\theta)=\tfrac12\|X\theta-y\|_2^2$:
+\textbf{Unbiasedness.}
+Write the estimator using indicators:
 \[
-\theta_{k+1}^{gd} \;=\; \theta_k^{gd} - \alpha_k \nabla R_S(\theta_k^{gd})
-\;=\; \theta_k^{gd} - \alpha_k X^\top(X\theta_k^{gd}-y)
-\;=\; (I - \alpha_k X^\top X)\theta_k^{gd} + \alpha_k X^\top y.
+\hat{\mathit{ATE}}
+= \frac{2}{n} \sum_{i=1}^n \mathbb{I}\{a_i = 1\} y_i(1)
+  - \frac{2}{n} \sum_{i=1}^n \mathbb{I}\{a_i = 0\} y_i(0).
 \]
-With $\theta_0^{gd}=0$, an induction shows $\theta_k^{gd}\in \mathrm{range}(X^\top)$ for all $k$:
-the right-hand side is a sum of $(I-\alpha_k X^\top X)\theta_k^{gd}\in \mathrm{range}(X^\top)$ and
-$X^\top y\in \mathrm{range}(X^\top)$.
-
-By the assumption on the step sizes $(\alpha_k)$, gradient descent converges to a minimizer
-$\theta_\infty$ of $R_S$. Since the problem is interpolable (rank$(X)=n$ and $d>n$),
-every minimizer satisfies $X\theta_\infty = y$, and thus $\theta_\infty$ is a solution to $X\theta=y$.
-Moreover, because each iterate lies in $\mathrm{range}(X^\top)$ and $\mathrm{range}(X^\top)$ is closed,
-we have $\theta_\infty \in \mathrm{range}(X^\top)$.
-
-Let $\theta^\dagger := X^\top (XX^\top)^{-1}y$ denote the minimum-norm solution (the pseudoinverse solution).
-Every solution of $X\theta=y$ can be written uniquely as
+Under complete randomization with $n/2$ treated and $n/2$ control units, each unit is equally likely to be treated, so
 \[
-\theta \;=\; \theta^\dagger + v, \qquad v\in \ker(X),
+\mathbb{P}(a_i = 1) = \mathbb{P}(a_i = 0) = \frac{1}{2}
+\quad\Rightarrow\quad
+\mathbb{E}[\mathbb{I}\{a_i = 1\}] = \mathbb{E}[\mathbb{I}\{a_i = 0\}] = \frac{1}{2}.
 \]
-and $\mathrm{range}(X^\top)$ is orthogonal to $\ker(X)$ because
-$\langle X^\top u, v\rangle = \langle u, Xv\rangle = 0$ for all $u$ and $v\in\ker(X)$.
-Hence, for any solution $\theta=\theta^\dagger+v$,
+Thus
+{\small\[
+\mathbb{E}[\hat{\mathit{ATE}}]
+= \frac{2}{n} \sum_{i=1}^n \mathbb{E}[\mathbb{I}\{a_i = 1\}]\,y_i(1)
+  - \frac{2}{n} \sum_{i=1}^n \mathbb{E}[\mathbb{I}\{a_i = 0\}]\,y_i(0)
+= \frac{1}{n} \sum_{i=1}^n y_i(1) - \frac{1}{n} \sum_{i=1}^n y_i(0)
+= \mathit{ATE},
+\]}
+
+\textbf{Variance.}
+
+Rewrite the estimator as
 \[
-\|\theta\|_2^2 \;=\; \|\theta^\dagger\|_2^2 + \|v\|_2^2 \;\ge\; \|\theta^\dagger\|_2^2,
+\hat{\mathit{ATE}}
+= -\frac{2}{n}\sum_{i=1}^n y_i(0)
++ \frac{2}{n}\sum_{i=1}^n Z_i \big(y_i(1)+y_i(0)\big),
 \]
-with equality iff $v=0$ (i.e., $\theta\in \mathrm{range}(X^\top)$).
-Since $\theta_\infty$ is both a solution and lies in $\mathrm{range}(X^\top)$, it must equal $\theta^\dagger$.
-Therefore, gradient descent initialized at $0$ converges to the minimum Euclidean norm solution:
+where $Z_i = \mathbb{I}\{a_i = 1\}$.
+Let
 \[
-\theta_\infty \;=\; X^\top(XX^\top)^{-1}y.
+w_i := y_i(1) + y_i(0), \qquad
+\bar{w} := \frac{1}{n} \sum_{i=1}^n w_i,
+\]
+and denote the finite-population variance
+\[
+S_w^2
+= \frac{1}{n-1}\sum_{i=1}^n (w_i - \bar{w})^2.
 \]
 
-    \item Rather than use a fixed learning rate, Adam attempts to adapt the learning rate for each parameter using past gradient information.
-    In particular, Adam generates a sequence of points $\{\theta_k^{ad}\}$ according to:
-    $$\theta_{k+1}^{ad} = \theta_k^{ad} - \alpha_k H_k^{-1} \nabla R_S [\theta_k^{ad}] + \beta_k H_k^{-1} H_{k-1} (\theta_k^{ad} - \theta_{k-1}^{ad}),$$
-where $\alpha_k$ and $\beta_k$ are fixed sequences, and $H_k$ is a positive definite, diagonal matrix
-$$H_k = \mathit{diag}\left(\left\{\sum_{i=1}^k \eta_i g_i \circ g_i\right\}^{1/2}\right),$$
-where $\eta_k$ is another fixed set of coefficients, $g_k = \nabla R_S [\theta_k^{ad}]$, and $\circ$ denotes an entry-wise product.
-Assume the sequences $\alpha_k$, $\beta_k$ , $\eta_k$ are chosen so that Adam converges to a minimizer of the objective (1).  (You don’t need to show how to choose these sequences).
-Suppose there exists some scalar $c$ such that $X\mathit{sign}(X^\top y) = cy$, and we initialize $\theta_0^{ad} , \theta_{-1}^{ad} = 0$
-Prove that Adam converges to the unique solution $\theta \propto \mathit{sign}(X y)$.
-Hint: Use induction to show every iterate satisfies $\theta_k^{ad} = \lambda_k \mathit{sign}(X^\top y)$ for some scalar $\lambda_k$.
-
-\textbf{Answer:}
-
-Assume there exists $c\in\mathbb{R}$ such that
+Since exactly $n/2$ units are sampled without replacement to form the treated group, the random sum
 \[
-X\,\mathrm{sign}(X^\top y)=c\,y,
+\sum_{i=1}^n Z_i w_i
 \]
-and initialize $\theta^{ad}_0=\theta^{ad}_{-1}=0$. Let $g_k=\nabla R_S(\theta^{ad}_k)=X^\top(X\theta^{ad}_k-y)$ and
+is the sample total of a simple random sample of size $m = n/2$ without replacement from $\{w_i\}$.
+
+A standard finite-population result gives
 \[
-H_k=\mathrm{diag}\!\left(\Big\{\sum_{i=1}^k \eta_i\, g_i\circ g_i\Big\}^{1/2}\right),
-\quad \alpha_k,\beta_k,\eta_k>0,
-\]
-with the Adam update
-\[
-\theta^{ad}_{k+1}=\theta^{ad}_k-\alpha_k H_k^{-1} g_k+\beta_k H_k^{-1}H_{k-1}(\theta^{ad}_k-\theta^{ad}_{k-1}).
+\operatorname{Var}\!\left(\sum_{i=1}^n Z_i w_i\right)
+= m(1 - m/n)\, S_w^2
+= \frac{n}{2}\left(1-\frac{1}{2}\right) S_w^2
+= \frac{n}{4} S_w^2.
 \]
 
-\paragraph{Step 1: Invariance of the span of $s:=\mathrm{sign}(X^\top y)$.}
-We prove by induction that for all $k\ge 0$ there exists a scalar $\lambda_k$ with
+Therefore
 \[
-\theta^{ad}_k=\lambda_k\, s.
+\operatorname{Var}(\hat{\mathit{ATE}})
+= \left(\frac{2}{n}\right)^2
+\operatorname{Var}\!\left(\sum_{i=1}^n Z_i w_i\right)
+= \frac{4}{n^2} \cdot \frac{n}{4} S_w^2
+= \frac{S_w^2}{n}.
 \]
-The base case holds with $\lambda_0=\lambda_{-1}=0$. Assume $\theta^{ad}_k=\lambda_k s$ and $\theta^{ad}_{k-1}=\lambda_{k-1}s$.
+
+Thus the variance of the Horvitz--Thompson estimator is
+\[
+\boxed{
+\operatorname{Var}(\hat{\mathit{ATE}})
+= \frac{1}{n(n-1)}\sum_{i=1}^n
+\big( (y_i(1)+y_i(0)) - (\bar{y}(1)+\bar{y}(0)) \big)^2
+}
+\]
+where
+\[
+\bar{y}(1) = \frac{1}{n}\sum_{i=1}^n y_i(1),
+\qquad
+\bar{y}(0) = \frac{1}{n}\sum_{i=1}^n y_i(0).
+\]
+
+    \item Now consider a different estimator of the ATE.
+        Suppose $m_1$ of the units are assigned to action 1 and $m_0$ to action zero.
+        For $j \in \{0, 1\}$, define
+        $$\hat{\mu}_j := \frac{1}{m_j} \sum_{i : a_i = j} y_i (j)$$
+        The $z-\mathit{score}$ is the quantity
+        $$z= \frac{\hat{\mu}_1 - \hat{\mu}_0}{\mathit{std}(y) \sqrt{\frac{1}{m_0} + \frac{1}{m_1}}}$$
+            Under the $z-\mathit{test}$, a result is statistically significant if $z$ has magnitude larger than 1.96.
+            Show that no matter how a is chosen, $z$ is proportional to the correlation coefficient of $a$ and $y$.
+            That is, prove
+            $$z = \sqrt{n} R(a, y) = \frac{\sqrt{n} \mathit{cov}(a,y)}{\mathit{std}(a)\mathit{std}(y)}.$$
+\end{enumerate}
+
+\section{}
+Consider a $k$-armed bandit problem with $[0, 1]$-bounded rewards, which means $X^(t) \in [0, 1]^k$ for all rounds $t$.
+Let $\mu_i = \mathbb{E}[X_i^{(1)}]$ be the expected reward from arm $i \in [k]$ and let $\mu_* = \max_{i\in[k]} \mu_i$.
+The $\epsilon$-greedy algorithm takes as input an exploration schedule $\{\epsilon_t \}$, where $\epsilon_t \in [0, 1]$ for all $t$, and works as follows.
+On the first $k$ rounds, the algorithm plays each arm once.
+On each round $t > k$, with probability $\epsilon_t$ , the algorithm plays $i_t \sim \mathit{Unif}(1, \dots , k)$, and with probability $1 - \epsilon_t$, it plays
+$$i_t = \arg \max_{i \in [k]} \frac{1}{\sum_{s<t} \mathbb{I}(i_s = i)}\sum_{s<t} X_i^{(s)} \mathbb{I}(i_s = i).$$
+\begin{enumerate}[(i)]
+    \item Suppose $\epsilon_t = \epsilon \in (0, 1)$ for all t.
+        Show that $$\lim_{t \rightarrow \infty} \frac{1}{t} \left( t\mu_* - \mathbb{E}\left[ \sum_{s \leq t} X_{i_s}^{(s)}\right]\right) = \frac{\epsilon}{k} \sum_{i \in [k]} (\mu_* - \mu_i).$$
+What does this result imply about the expected regret of the $\epsilon$-greedy algorithm with any constant exploration schedule?
+
+
+On each round $s > k$, the $\epsilon$-greedy algorithm explores with
+probability $\epsilon$ and exploits with probability $1-\epsilon$.
+By the law of large numbers, the empirical means converge almost surely
+to their true means, so on exploitation rounds the optimal arm is
+selected with probability tending to $1$.
+Thus, for each arm $i\in[k]$,
+\[
+\Pr(i_s = i) \;\longrightarrow\;
+\begin{cases}
+(1-\epsilon) + \epsilon/k, & i \text{ optimal},\\[3pt]
+\epsilon/k, & i \text{ suboptimal}.
+\end{cases}
+\]
+
+Therefore the expected reward per round converges to
+\[
+r_\infty
+= (1-\epsilon)\mu_* + \epsilon \cdot \frac{1}{k}
+\sum_{i=1}^k \mu_i.
+\]
+Since the rewards lie in $[0,1]$, the sequence $\{r_s\}$ is bounded, and a
+Cesàro convergence argument gives
+\[
+\lim_{t\to\infty} \frac{1}{t} \mathbb{E}\!\left[\sum_{s\le t} X_{i_s}^{(s)}\right] =
+\lim_{t\to\infty} \frac{1}{t}
+\sum_{s\le t} r_s
+= r_\infty.
+\]
+
+Hence
+\[
+\begin{aligned}
+\lim_{t\to\infty} \frac{1}{t}
+\left(t\mu_* - 
+\mathbb{E}\!\left[\sum_{s\le t} X_{i_s}^{(s)}\right]\right)
+&=
+\mu_* - r_\infty \\
+&= \mu_* - \left((1-\epsilon)\mu_* +
+\epsilon\cdot\frac{1}{k}\sum_{i=1}^k \mu_i\right) \\
+&= \frac{\epsilon}{k}
+\sum_{i=1}^k (\mu_* - \mu_i).
+\end{aligned}
+\]
+
+Thus,
+\[
+\boxed{
+\lim_{t \rightarrow \infty} \frac{1}{t}
+\left( t\mu_* - \mathbb{E}\left[ \sum_{s \leq t} 
+X_{i_s}^{(s)}\right]\right)
+= \frac{\epsilon}{k} \sum_{i \in [k]} 
+(\mu_* - \mu_i)
+}.
+\]
+
+\medskip
+\noindent\textbf{Implication for regret.}
+The limit above is the asymptotic average regret per round.  Since it is
+a positive constant (unless all arms have the same mean), we have
+\[
+R(t) = \Theta(t).
+\]
+Therefore, $\epsilon$-greedy with any constant $\epsilon \in (0,1)$
+incurs \emph{linear regret} and is not a no-regret algorithm.
+
+
+\item Suppose $\epsilon_t = \left( \frac{K log(t)}{t}\right)^{1/3}$.
+    Show that there is a universal constant $C > 0$ such that
+    $$t\mu_* - \mathbb{E}\left[\sum_{s\leq t}X_{t_s}^{(s)}\right]\leq C (K\log{(t)})^{1/3} \cdot t^{2/3}$$
+for all t. What does this result imply about the expected regret of the $\epsilon$-greedy algorithm with a decaying exploration schedule?
+Compare and contrast this result with the result of the previous part.
+
+The (pseudo-)regret up to time $t$ is
+\[
+R(t)
+= t\mu_* - \mathbb{E}\Big[\sum_{s\le t} X_{i_s}^{(s)}\Big].
+\]
+Each time a suboptimal arm is played, the instantaneous regret is at most
+$1$ since rewards are in $[0,1]$.
+Thus, the total regret is at most the expected number of pulls of
+suboptimal arms:
+\[
+R(t) \;\le\;
+\mathbb{E}\Big[\#\{\text{suboptimal arm pulls up to time } t\}\Big].
+\]
+
+At round $s$, the algorithm explores with probability $\epsilon_s$ and
+chooses an arm uniformly at random; during exploration, each arm is
+chosen with probability $\epsilon_s/k$.
+Ignoring for the moment any suboptimal choices during exploitation
+(which can be shown to contribute at most a comparable lower-order term),
+we have
+\[
+\mathbb{E}\Big[\#\{\text{suboptimal arm pulls up to time } t\}\Big]
+\;\lesssim\;
+\sum_{s=1}^t \epsilon_s.
+\]
+
+With the given schedule $\epsilon_s = \big( K\log(s)/s \big)^{1/3}$,
+\[
+\sum_{s=1}^t \epsilon_s
+= K^{1/3} \sum_{s=1}^t \frac{(\log s)^{1/3}}{s^{1/3}}.
+\]
+Since $f(x) = (\log x)^{1/3} x^{-1/3}$ is positive and decreasing for
+$x\ge e$, we can bound the sum by an integral:
+\[
+\sum_{s=1}^t \frac{(\log s)^{1/3}}{s^{1/3}}
+\le 1 + \int_1^t \frac{(\log x)^{1/3}}{x^{1/3}}\,dx.
+\]
+
+Consider the integral
+\[
+I(t) := \int_1^t \frac{(\log x)^{1/3}}{x^{1/3}}\,dx.
+\]
+Use the change of variables $x = u^{3/2}$, so $dx = \tfrac{3}{2}u^{1/2}du$
+and $x^{-1/3} = u^{-1/2}$.
 Then
 \[
-g_k \;=\; X^\top(X\theta^{ad}_k-y)
-\;=\; X^\top(\lambda_k X s - y)
-\;=\; (\lambda_k c - 1)\, X^\top y
-\;=\; a_k\, X^\top y,
+I(t)
+= \int_{1}^{t^{2/3}}
+\frac{\big(\log u^{3/2}\big)^{1/3}}{u^{1/2}} \cdot \frac{3}{2}u^{1/2}\,du
+= \frac{3}{2}\int_{1}^{t^{2/3}} \big(\tfrac{3}{2}\log u\big)^{1/3}\,du.
 \]
-where $a_k:=\lambda_k c - 1$.
+For all $1\le u \le t^{2/3}\le t$, we have
+$(\log u)^{1/3} \le (\log t)^{1/3}$, hence
+\[
+I(t)
+\le \frac{3}{2}\Big(\tfrac{3}{2}\Big)^{1/3}
+(\log t)^{1/3} \int_1^{t^{2/3}} du
+\le C_1 (\log t)^{1/3} t^{2/3},
+\]
+for some universal constant $C_1>0$.
+Therefore,
+\[
+\sum_{s=1}^t \epsilon_s
+\le K^{1/3}\big(1 + C_1 (\log t)^{1/3} t^{2/3}\big)
+\le C_2 (K\log t)^{1/3} t^{2/3},
+\]
+for another universal constant $C_2>0$ and all $t$ large enough (and we
+can adjust $C_2$ to make the inequality hold for all $t$).
 
-Since each $g_i$ is a scalar multiple of $X^\top y$, we have
+Since each pull of a suboptimal arm contributes at most $1$ to regret,
+we obtain
 \[
-g_i\circ g_i \;=\; a_i^2\,(X^\top y)\circ(X^\top y),
-\quad
-\sum_{i=1}^k \eta_i\, g_i\circ g_i \;=\; S_k\, (X^\top y)\circ(X^\top y),
+R(t)
+= t\mu_* - \mathbb{E}\Big[\sum_{s\le t} X_{i_s}^{(s)}\Big]
+\le C (K\log t)^{1/3} t^{2/3},
 \]
-with the scalar $S_k:=\sum_{i=1}^k \eta_i a_i^2>0$. Hence
+for some universal constant $C>0$.
+This gives the desired bound
 \[
-H_k \;=\; \sqrt{S_k}\,\mathrm{diag}\!\big(|X^\top y|\big),
-\quad
-H_k^{-1} \;=\; \frac{1}{\sqrt{S_k}}\,\mathrm{diag}\!\Big(\tfrac{1}{|X^\top y|}\Big).
+\boxed{
+t\mu_* - \mathbb{E}\Big[\sum_{s\le t} X_{i_s}^{(s)}\Big]
+\le C (K\log t)^{1/3} t^{2/3}
+\quad\text{for all } t.
+}
+\]
+
+\medskip
+\noindent\textbf{Implication for regret.}
+We have shown that
+\[
+R(t) = O\!\big((K\log t)^{1/3} t^{2/3}\big).
+\]
+In particular, this is \emph{sublinear} in $t$, so the average regret
+satisfies
+\[
+\frac{R(t)}{t}
+= O\!\big((K\log t)^{1/3} t^{-1/3}\big)
+\;\xrightarrow[t\to\infty]{}\;0.
+\]
+Thus, $\epsilon$-greedy with the decaying schedule
+$\epsilon_t = (K\log t / t)^{1/3}$ is a \emph{no-regret} algorithm.
+
+\medskip
+\noindent\textbf{Comparison with part (i).}
+In part (i), with constant $\epsilon_t = \epsilon \in (0,1)$, we found
+that the average regret per round converges to a positive constant, so
+$R(t)$ grows \emph{linearly} with $t$:
+$$
+R(t) = \Theta(t).
+$$
+
+In contrast, with the decaying schedule $\epsilon_t = (K\log t / t)^{1/3}$, the regret grows only as $$O\big((K\log t)^{1/3} t^{2/3}\big)$$, which is sublinear.
+Therefore the decaying exploration schedule yields much better long-run performance:
+the average regret goes to $0$, whereas under constant $\epsilon$ it converges to a positive constant.
+
+\end{enumerate}
+\section{}
+Minimizing regret to the best fixed arm in hindsight is only one way to formalize what it means to perform well in a $k$-armed bandit problem.
+An alternative goal is best-arm identification: at the end of $T$ rounds, predict the index $y_T$ of the arm with highest expected reward.
+The goal of best-arm identification can be equivalently stated as minimizing instantaneous regret $\mu_* - \mu_{y_T}$.
+When a $k$-armed bandit problem is interpreted as a clinical trial involving $k$ treatments, the regret minimization problem can be interpreted as minimizing harm done to study participants, while best-arm identification can be interpreted as identifying the best treatment for all future patients, possibly at the cost of greater harm done to study participants.
+\begin{enumerate}[(i)]
+    \item Suppose you alternate between playing each of the $k$ arms over $T$ rounds, such that each arm is played $\lfloor T /k\rfloor$ times.
+        Prove that for sufficiently large $T$, there exists constant $C > 0$ such that
+        $$\mu_* - \mathbb{E}[\mu_{y_T}] \leq e^{-C\cdot T}.$$
+Can this algorithm achieve sublinear regret as well?
+
+
+Let $\mu_1,\dots,\mu_k$ be the arm means, and let
+\[
+\mu_* = \max_{i \in [k]} \mu_i, 
+\quad i_* \in \arg\max_i \mu_i.
+\]
+Assume there is a unique best arm, so that for all $i \neq i_*$ we can define the gaps
+\[
+\Delta_i := \mu_* - \mu_i > 0,
+\qquad
+\Delta_{\min} := \min_{i \neq i_*} \Delta_i > 0.
+\]
+
+Over $T$ rounds, the algorithm plays each arm exactly
+\[
+m := \left\lfloor \frac{T}{k} \right\rfloor
+\]
+times. Let $\widehat{\mu}_i$ be the empirical mean of arm $i$ after $m$ plays. At the end, the algorithm outputs
+\[
+y_T := \arg\max_{i \in [k]} \widehat{\mu}_i.
+\]
+
+\paragraph{Step 1: A high-probability “good” event.}
+Consider the event
+\[
+E := \bigcap_{i=1}^k \left\{ \left|\widehat{\mu}_i - \mu_i\right| \le \frac{\Delta_{\min}}{2} \right\}.
+\]
+On $E$, we compare the empirical means:
+
+For the optimal arm $i_*$,
+\[
+\widehat{\mu}_{i_*} \ge \mu_* - \frac{\Delta_{\min}}{2}.
+\]
+For any suboptimal arm $i \neq i_*$,
+\[
+\widehat{\mu}_i 
+\le \mu_i + \frac{\Delta_{\min}}{2}
+= \mu_* - \Delta_i + \frac{\Delta_{\min}}{2}
+\le \mu_* - \frac{\Delta_{\min}}{2},
+\]
+since $\Delta_i \ge \Delta_{\min}$. Hence on $E$ we must have
+\[
+\widehat{\mu}_{i_*} > \widehat{\mu}_i \quad \forall\, i \neq i_*,
+\]
+so $y_T = i_*$ and
+\[
+E \subseteq \{ y_T = i_* \}.
+\]
+Thus
+\[
+\Pr(y_T \neq i_*) \le \Pr(E^c)
+\le \sum_{i=1}^k \Pr\!\left( \left|\widehat{\mu}_i - \mu_i\right| > \frac{\Delta_{\min}}{2} \right).
+\]
+
+\paragraph{Step 2: Apply Hoeffding and bound the error probability.}
+Each $\widehat{\mu}_i$ is the average of $m$ i.i.d.\ $[0,1]$-bounded rewards, so by Hoeffding's inequality,
+\[
+\Pr\!\left( \left|\widehat{\mu}_i - \mu_i\right| > \frac{\Delta_{\min}}{2} \right)
+\le 2 \exp\!\left( - 2 m \left(\frac{\Delta_{\min}}{2}\right)^2 \right)
+= 2 \exp\!\left( - \frac{m \Delta_{\min}^2}{2} \right).
 \]
 Therefore,
 \[
-H_k^{-1} g_k
-= \frac{a_k}{\sqrt{S_k}}\, \mathrm{diag}\!\Big(\tfrac{1}{|X^\top y|}\Big)\, X^\top y
-= \frac{a_k}{\sqrt{S_k}}\, s.
+\Pr(y_T \neq i_*)
+\le 2k \exp\!\left( - \frac{m \Delta_{\min}^2}{2} \right).
 \]
-Similarly,
-\[
-H_k^{-1}H_{k-1}
-= \frac{\sqrt{S_{k-1}}}{\sqrt{S_k}}\, I,
-\]
-since the diagonal factors $\mathrm{diag}(|X^\top y|)$ cancel.
 
-Plugging into Adam’s update and using the induction hypothesis,
+For sufficiently large $T$, we have $m = \lfloor T/k \rfloor \ge \tfrac{T}{2k}$ (e.g., for $T \ge 2k$), so
 \[
-\theta^{ad}_{k+1}
-= \Big[\lambda_k - \alpha_k \frac{a_k}{\sqrt{S_k}}
-+ \beta_k \frac{\sqrt{S_{k-1}}}{\sqrt{S_k}}(\lambda_k-\lambda_{k-1})\Big] s
-=:\lambda_{k+1}\, s.
+\Pr(y_T \neq i_*)
+\le 2k \exp\!\left( - \frac{T \Delta_{\min}^2}{4k} \right)
+= 2k \, e^{-C' T},
+\quad \text{where } C' := \frac{\Delta_{\min}^2}{4k} > 0.
 \]
-Thus the form is preserved, completing the induction.
+Since $2k$ is just a constant, we can absorb it into the exponential for large $T$: there exist $T_0$ and $C>0$ such that for all $T \ge T_0$,
+\[
+\Pr(y_T \neq i_*) \le e^{-C T}.
+\]
 
-\paragraph{Step 2: Limit point and interpolation.}
-By assumption on $(\alpha_k,\beta_k,\eta_k)$, Adam converges to a minimizer $\theta_\infty$ of $R_S$.
-Since the iterates remain in $\mathrm{span}\{s\}$ and this subspace is closed, $\theta_\infty=\lambda_\infty s$ for some $\lambda_\infty$.
-Every minimizer of $R_S$ in the overparameterized, full-row-rank setting satisfies $X\theta_\infty=y$.
+\paragraph{Step 3: From misidentification probability to instantaneous regret.}
+We have
+\[
+\mu_* - \mathbb{E}[\mu_{y_T}]
+= \sum_{i=1}^k (\mu_* - \mu_i) \Pr(y_T = i)
+= \sum_{i \neq i_*} \Delta_i \Pr(y_T = i).
+\]
+Using $\Delta_i \le 1$ (since rewards lie in $[0,1]$),
+\[
+\mu_* - \mathbb{E}[\mu_{y_T}]
+\le \sum_{i \neq i_*} \Pr(y_T = i)
+= \Pr(y_T \neq i_*)
+\le e^{-C T},
+\]
+for sufficiently large $T$. This proves the desired exponential best-arm identification bound.
+
+\paragraph{Can this algorithm achieve sublinear regret?}
+No. Let $N_i(T)$ be the number of times arm $i$ is pulled up to time $T$. For this round-robin algorithm,
+\[
+N_i(T) = m = \left\lfloor \frac{T}{k} \right\rfloor \quad \text{for all } i.
+\]
+The (expected) cumulative regret is
+\[
+R_T
+:= T\mu_* - \mathbb{E}\!\left[\sum_{t=1}^T X_{i_t}^{(t)}\right]
+= \sum_{i=1}^k (\mu_* - \mu_i)\, \mathbb{E}[N_i(T)]
+= \sum_{i \neq i_*} \Delta_i \left\lfloor \frac{T}{k} \right\rfloor.
+\]
+Since each $\Delta_i > 0$ for $i \neq i_*$, we get
+\[
+R_T = \Theta(T),
+\]
+which is \emph{linear} in $T$ and hence not sublinear.
+
+Thus, this simple uniform exploration strategy achieves exponentially small best-arm identification error but suffers linear cumulative regret.
+
+    \item Suppose you have a blackbox algorithm whose regret to the best fixed arm in hindsight after $T$ rounds is bounded by a sublinear function of $T$.
+        That is, the algorithm guaranteees that
+        $$T \mu_* - \mathbb{E}\left[\sum_{t \leq T}X_{i_t}^{(t)}\right] \leq \phi(T)$$
+        for some $\phi : \mathbb{R}_+ \rightarrow \mathbb{R}_+$ such that $\lim_{T\rightarrow \infty}\phi(T)/T = 0$.
+        Show how this algorithm can be used to obtain the best-arm identification guarantee
+        $$\mu_* - \mathbb{E}[\mu_{y_T}]\leq \frac{\phi(T)}{T}.$$
+What does this result imply about the compatibility of regret minimization and best-arm identification,
+as goals? Compare and contrast with the result of the previous part.
+
+\textbf{Construction of $y_T$ and proof of the bound.}
+Run the blackbox algorithm for $T$ rounds, obtaining actions $i_1,\dots,i_T$.
+After round $T$, define $y_T$ as follows:
+pick an index $U$ uniformly at random from $\{1,\dots,T\}$, independently of the rewards, and set
+\[
+y_T := i_U.
+\]
+
+We first relate $\mathbb{E}[\mu_{y_T}]$ to the average performance of the algorithm.
+By definition of $U$,
+\[
+\mathbb{E}[\mu_{y_T}]
+= \mathbb{E}[\mu_{i_U}]
+= \frac{1}{T} \sum_{t=1}^T \mathbb{E}[\mu_{i_t}].
+\]
+Since $X_{i_t}^{(t)}$ has mean $\mu_{i_t}$,
+\[
+\mathbb{E}\Big[\sum_{t=1}^T X_{i_t}^{(t)}\Big]
+= \sum_{t=1}^T \mathbb{E}[\mu_{i_t}].
+\]
 Hence
 \[
-X(\lambda_\infty s)=y
-\;\Longleftrightarrow\;
-\lambda_\infty X s = y
-\;\Longleftrightarrow\;
-\lambda_\infty c\, y = y
-\;\Longleftrightarrow\;
-\lambda_\infty = \frac{1}{c}.
+\mathbb{E}[\mu_{y_T}]
+= \frac{1}{T}\,\mathbb{E}\Big[\sum_{t=1}^T X_{i_t}^{(t)}\Big].
 \]
 
-\paragraph{Step 3: Uniqueness within the span and conclusion.}
-If $\lambda_1 s$ and $\lambda_2 s$ both solve $X\theta=y$, then
+Using the regret guarantee,
 \[
-0=X(\lambda_1 s-\lambda_2 s)=(\lambda_1-\lambda_2) X s
-=(\lambda_1-\lambda_2) c\, y,
+T\mu_* - \mathbb{E}\Big[\sum_{t=1}^T X_{i_t}^{(t)}\Big] \le \phi(T),
 \]
-forcing $\lambda_1=\lambda_2$. Thus the interpolating point in $\mathrm{span}\{s\}$ is unique:
+we divide both sides by $T$:
 \[
-\theta_\infty \;=\; \frac{1}{c}\, \mathrm{sign}(X^\top y)\;\propto\; \mathrm{sign}(X^\top y).
+\mu_* - \frac{1}{T}\,\mathbb{E}\Big[\sum_{t=1}^T X_{i_t}^{(t)}\Big]
+\le \frac{\phi(T)}{T}.
 \]
-Therefore, under the stated condition and initialization, Adam converges to the unique solution proportional to $\mathrm{sign}(X^\top y)$.
+Substituting the expression for $\mathbb{E}[\mu_{y_T}]$ gives
+\[
+\mu_* - \mathbb{E}[\mu_{y_T}]
+\le \frac{\phi(T)}{T},
+\]
+which is the desired best-arm identification guarantee.
 
-    \item Fix the labels $y \in \{-1, 1\}$, and let $X = [y; I_{n\times n}]$. 
-        Hence, only the first feature is discriminative, and the others are unrelated to the true label.
-        Compute the solutions found by running (a) gradient descent and (b) Adam on this problem instance.
+\medskip
+\textbf{Interpretation and comparison with part (i).}
 
-\paragraph{(a) Gradient descent (from $\theta_0=0$).}
-Gradient descent on $R_S(\theta)=\tfrac12\|X\theta-y\|_2^2$ with a convergent stepsize schedule and $\theta_0=0$ converges to the minimum-norm interpolator
+Since $\phi(T)$ is sublinear, we have $\phi(T)/T \to 0$ as $T\to\infty$, so this construction yields
 \[
-\theta^{\text{GD}} \;=\; X^\top(XX^\top)^{-1}y.
+\mu_* - \mathbb{E}[\mu_{y_T}] \to 0.
 \]
-Here
-\[
-XX^\top \;=\; yy^\top + I_n,
-\qquad
-(yy^\top + I_n)^{-1}y \;=\; \frac{1}{1+\|y\|_2^2}\,y \;=\; \frac{1}{n+1}\,y,
-\]
-so
-\[
-\theta^{\text{GD}}
-\;=\; X^\top \frac{1}{n+1}y
-\;=\; \frac{1}{n+1} X^\top y
-\;=\; \frac{1}{n+1}\begin{bmatrix} y^\top y \\[2pt] y \end{bmatrix}
-\;=\; \frac{1}{n+1}\begin{bmatrix} n \\[2pt] y \end{bmatrix}.
-\]
-One can verify $X\theta^{\text{GD}}=\frac{n}{n+1}y+\frac{1}{n+1}y=y$.
+Thus, \emph{any} algorithm with sublinear regret can be turned into a best-arm identification procedure whose instantaneous regret vanishes asymptotically.
 
-\paragraph{(b) Adam (from $\theta^{\text{ad}}_{0}=\theta^{\text{ad}}_{-1}=0$).}
-From the previous part’s result, if there exists $c$ such that $X\,\mathrm{sign}(X^\top y)=c\,y$, Adam converges to
-\[
-\theta^{\text{ADAM}} \;=\; \frac{1}{c}\,\mathrm{sign}(X^\top y).
-\]
-In this instance,
-\[
-X^\top y = \begin{bmatrix} y^\top y \\[2pt] y \end{bmatrix}=\begin{bmatrix} n \\[2pt] y \end{bmatrix}
-\quad\Rightarrow\quad
-\mathrm{sign}(X^\top y)=\begin{bmatrix} 1 \\[2pt] y \end{bmatrix}=:s,
-\]
-and
-\[
-X\,s \;=\; y\cdot 1 + I_n y \;=\; 2y,
-\]
-so $c=2$. Therefore
-\[
-\theta^{\text{ADAM}} \;=\; \frac{1}{2}\begin{bmatrix} 1 \\[2pt] y \end{bmatrix},
-\qquad
-X\theta^{\text{ADAM}}=\tfrac12(y+y)=y.
-\]
+In contrast, in part~(i), the simple round--robin algorithm achieves \emph{excellent} best-arm identification (the error decays exponentially in $T$), but its cumulative regret is $\Theta(T)$ (linear), so it \emph{does not} achieve sublinear regret.
 
-\paragraph{Summary.}
-\[
-\boxed{\;\theta^{\text{GD}}=\dfrac{1}{n+1}\begin{bmatrix} n \\ y \end{bmatrix},\qquad
-\theta^{\text{ADAM}}=\dfrac{1}{2}\begin{bmatrix} 1 \\ y \end{bmatrix}\;}
-\]
-Both interpolate the data ($X\theta=y$), but $\theta^{\text{GD}}$ is the minimum-norm interpolator, whereas $\theta^{\text{ADAM}}$ generally is not.
-
-    \item Compare the relative weight the solutions found in the above part place on the discriminative feature relative to the remaining features, i.e. compute $\frac{|\theta[1]|}{|\theta[i]|}$ for both gradient descent and Adam, where $\theta[i]$ denotes the $i$-th coordinate of $\theta$.
-        Heuristically, which solution do you expect to generalize better to new data?
-
-
-\textbf{Relative weight on the discriminative feature.}
-From the previous part,
-\[
-\theta^{\text{GD}}=\frac{1}{n+1}\begin{bmatrix} n \\ y \end{bmatrix},
-\qquad
-\theta^{\text{ADAM}}=\frac{1}{2}\begin{bmatrix} 1 \\ y \end{bmatrix}.
-\]
-For any $i\in\{2,\dots,n+1\}$, we have $|\theta^{\text{GD}}[1]|=\tfrac{n}{n+1}$ and $|\theta^{\text{GD}}[i]|=\tfrac{1}{n+1}$, while
-$|\theta^{\text{ADAM}}[1]|=\tfrac{1}{2}$ and $|\theta^{\text{ADAM}}[i]|=\tfrac{1}{2}$. Hence
-\[
-\frac{|\theta^{\text{GD}}[1]|}{|\theta^{\text{GD}}[i]|}=n,
-\qquad
-\frac{|\theta^{\text{ADAM}}[1]|}{|\theta^{\text{ADAM}}[i]|}=1.
-\]
-
-\paragraph{Heuristic generalization.}
-Only the first feature is truly predictive. Gradient descent (minimum-norm interpolator) assigns $n$ times more weight to this discriminative feature than to any spurious feature, and this selectivity \emph{increases} with $n$. Adam, by contrast, spreads equal magnitude across all coordinates. Heuristically, the GD solution should generalize better to new data (lower variance on irrelevant features), whereas Adam’s uniform weighting is more prone to overfit the spurious coordinates.
-
+Therefore:
+\begin{itemize}
+    \item Sublinear regret $\Rightarrow$ good best-arm identification (via the random-time trick above).
+    \item Good best-arm identification $\centernot\Rightarrow$ low regret (as shown by the round--robin example).
 \end{itemize}
+This shows that regret minimization is a strictly stronger requirement: algorithms designed to minimize regret are compatible with best-arm identification, but algorithms optimized solely for best-arm identification may incur large cumulative regret.
+
+\end{enumerate}
 
 \section{}
-Apply the concepts from the course lectures to your final project.
-\begin{itemize}
-    \item Provide your project abstract. You can copy it from the previous homework if you’d like.
-        This may have changed from last week, and that’s ok.
 
-We aim to use the BlueSky air traffic simulator to study and predict air traffic management (ATM) dynamics under high-density and partially faulty sensing conditions.
-BlueSky is an open-source simulator capable of running scenarios with hundreds of aircraft simultaneously, making it a powerful platform for generating realistic performance and navigation datasets.
-In this project, we extend the baseline scenario by introducing stochastic sensor-loss events, where drones have a random probability of losing sensor functionality during flight.
-The ultimate objective is to develop and evaluate machine-learning–based predictive models that can detect or anticipate sensor failure and maintain safe and efficient operations in dense advanced air mobility (AAM) environments.
-Our broader motivation is to contribute toward compositional and structured ATM policies that ensure scalability and safety in multi-agent airspaces.
-    \item Collect a representative data set of $(X, Y)$ pairs as you described in last week’s homework.
-        Describe what the features and labels mean for this prediction problem.
-        Describe the geometric invariances of the data (e.g., do you expect it to behave like a sequence or an image? Or something else?)
-
-
-\emph{Features ($X$):}
-Each data sample encodes the \emph{state of a drone or aircraft} at a given simulation time step. 
-Representative features include:
-\[
-X_t = [p_x,\, p_y,\, p_z,\, v,\, \psi,\, d_{\text{sep}},\, n_{\text{local}},\, w,\, h_t],
-\]
-where:
-\begin{itemize}
-    \item $p_x, p_y, p_z$: position coordinates (longitude, latitude, altitude),
-    \item $v$: airspeed,
-    \item $\psi$: heading angle,
-    \item $d_{\text{sep}}$: separation distance to the nearest neighbor,
-    \item $n_{\text{local}}$: local traffic density,
-    \item $f_{\text{plan}}$: flight plan waypoints or intended route,
-    \item $w$: wind speed or environmental disturbance (if modeled),
-    \item $h_t$: recent history window of past states.
-\end{itemize}
-These features are represented numerically as time-series vectors or aggregated feature arrays.
-
-
-\emph{Labels ($Y$):} whether the sensor of the drone is lost.
-
-The target variable indicates whether the drone’s sensor has failed:
-\[
-Y = 
-\begin{cases}
-1, & \text{if the drone loses its sensor at time } t, \\
-0, & \text{otherwise.}
-\end{cases}
-\]
-Thus, the problem is a binary classification task.
-
-    \item Find an appropriate vector encoding of $X$ so that you can apply linear classification.
-        Describe why this encoding is reasonable for this set of data.
-
-        \begin{itemize}
-            \item \textbf{Baseline (hand-crafted) encoding.}
-
-We encode each drone at time $t$ using a fixed-length window of recent states of length $L$ (simulation steps). 
-Let $s_\tau \in \mathbb{R}^{d_0}$ be the per-step state
-$$s_\tau = [p_x(\tau),\, p_y(\tau),\, p_z(\tau),\, v(\tau),\, \psi(\tau),\, d_{\text{sep}}(\tau),\, n_{\text{local}}(\tau),\, w(\tau)].$$
-We form a flattened feature vector with dynamics- and interaction-aware components:
-{\small $$\tilde{X}_t \;=\;
-\Big[
-\underbrace{s_{t-L+1}\,\|\,\cdots\,\|\,s_t}_{\text{raw history}}
-\;\;\| \;\;
-\underbrace{\Delta s_{t-L+2}\,\|\,\cdots\,\|\,\Delta s_t}_{\text{first differences}}
-\Big] \in \mathbb{R}^{D},
-$$}
-where $\Delta s_\tau := s_\tau - s_{\tau-1}$,
-computed over the window $[t\!-\!L\!+\!1,\,t]$.
-            \item \textbf{LLM-based lift (learned embedding).}
-                To compare against the hand-crafted baseline, we apply a sequence encoder (``LLM'') to obtain a high-dimensional lift
-                \[
-                    \phi_\theta(\tilde{X}_t)\in\mathbb{R}^{d'},\qquad d'\gg D,
-                \]
-                then train a linear classifier on $\phi_\theta(\tilde{X}_t)$.  
-                \emph{Rationale:} A learned lift can linearize complex dependencies (e.g., cumulative disturbance, interaction effects) while keeping the downstream model simple and data-efficient. We will vary $d'$ and regularization to assess the efficiency of embedding extraction versus the baseline.
-        \end{itemize}
-
-
-    \item Fit a linear model to this data. You can use whichever software you’d like, but specify the code you used to fit this model. Is the data linearly separable? Why or why not?
-
-A \emph{linear} classifier is required to assess linear separability; a DNN/MLP is \emph{not} linear. 
-We therefore train (i) a logistic-regression model (single affine layer) to test linear separability on $\tilde{X}_t$, and (ii) a shallow 2-layer MLP as a nonlinear baseline. 
-Both use \texttt{BCEWithLogitsLoss}.
-
-    \item Find a simple nonlinear lift of the data that is linearly separable.
-        Describe the lift in equations or code.
-        What is the associated margin? Again, you can use whichever solver you’d like to make the data separable.
-        Be creative in constructing your lift so that it is computationally efficient to compute.
-
-
-We design a lightweight sequence encoder (``LLM'') that maps the $L$-step history into a high-dimensional embedding $\phi_\theta(\tilde{X}_t)\in\mathbb{R}^{d'}$ on which a \emph{linear} classifier is trained.
-\end{itemize}
-
+We aim to improve fantasy football score prediction.
+Progress in this task has direct financial relevance in the form of gambling.
+This is a prediction problem that is quite challenging due to highly complex data that depends on many unmodeled features, as well as a general scarcity of valid data.
+For this problem, our overarching objective is to maximize prediction accuracy in determining the relative ordering of player performance (within various position groups) for a given week of NFL games.
+In doing so, we consider varied sources of data to determine which data and features are most successful in predicting week-to-week performance.
+We plan to investigate the efficacy of using embeddings of text-based sports articles as a feature.
+The idea behind this method is that articles may capture additional context and better inform previous statistics. If successful, a similar methodology may be used to inform trading decisions by analyzing the analysis and articles published by financial analysts.
+We intend to compare our prediction performance against the analysis and rankings from fantasy-focused sports media outlets, e.g., [Fantasy Pros](https://www.fantasypros.com/nfl/rankings/half-point-ppr-rb.php). 
 \end{document}
 

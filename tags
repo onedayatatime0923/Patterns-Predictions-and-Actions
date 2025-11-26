@@ -8,5 +8,7 @@
 3.3	hw1/main.tex	/^\\paragraph{3.3}$/;"	P
 4.1	hw1/main.tex	/^\\paragraph{4.1}$/;"	P
 4.2	hw1/main.tex	/^\\paragraph{4.2}$/;"	P
+Step 1  A high-probability    good    event.	hw5/main.tex	/^\\paragraph{Step 1: A high-probability “good” event.}$/;"	P
+Step 2  Apply Hoeffding and bound the error probability.	hw5/main.tex	/^\\paragraph{Step 2: Apply Hoeffding and bound the error probability.}$/;"	P
 action	src/test.py	/^    action = np.array([0,0]) # Your agent code here$/;"	v
 env	src/test.py	/^env = gym.make('MergeEnv-v0', render_mode='human')$/;"	v
