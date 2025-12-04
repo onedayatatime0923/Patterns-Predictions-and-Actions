@@ -1,0 +1,127 @@
+\documentclass[11pt]{report}
+
+% Packages
+% ------------------------------------------------------------------------
+\usepackage{amsmath,amssymb,amsfonts,graphicx,nicefrac,mathtools}
+\usepackage{scribe}
+\usepackage[letterpaper, margin=1in]{geometry}
+% ------------------------------------------------------------------------
+% Macros
+% ------------------------------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{remark}{Remark}
+\newtheorem{theorem}{Theorem}
+% ----------------------------------------------------------------------
+% Header information
+% ------------------------------------------------------------------------
+\begin{document}
+\course{CS281A}
+\coursetitle{Lec28-Reinforcement Learning-ChangKevin}
+\semester{Fall 2025} 
+\lecturer{Benjamin Recht}
+\scribe{Kevin Chang}              % your name 
+\lecturenumber{28}               % lecture number
+\lecturedate{December 2}       % month and day of lecture (omit year)
+
+\maketitle
+
+% ----------------------------------------------------------------------
+% Body of the document
+% ------------------------------------------------------------------------
+
+\section{Reinforcement Learning Overview}
+
+A generic reinforcement learning procedure:
+\begin{enumerate}
+    \item Generate candidate solutions (policies or actions).
+    \item Receive a reward or score for each candidate.
+    \item Update the parameters of the policy based on the received scores.
+    \item Repeat from Step 1.
+\end{enumerate}
+
+\section{Policy Gradient}
+
+We aim to solve:
+\[
+\max_{p \in \mathcal{Q}} \; \mathbb{E}_{x \sim p}[r(x)].
+\]
+
+A general stochastic gradient procedure is:
+\begin{enumerate}
+    \item Sample $x_1, \dots, x_n \sim p_t$.
+    \item Evaluate rewards $r(x_1), \dots, r(x_n)$.
+    \item Update the distribution parameters to obtain $p_{t+1}$.
+\end{enumerate}
+
+Let the policy be parameterized by $w$, and define:
+\[
+\Phi(w) = \mathbb{E}_{x \sim p(x \mid w)}[r(x)].
+\]
+
+\subsection{Policy Gradient Derivation}
+
+\[
+\nabla_w \Phi(w)
+    = \nabla_w \int r(x)\, p(x \mid w)\, dx
+    = \int r(x)\, \nabla_w p(x \mid w)\, dx 
+\]
+\[
+= \int r(x)\, p(x \mid w)\, \nabla_w \log p(x \mid w)\, dx
+    = \mathbb{E}_{x \sim p(x \mid w)}[\, r(x)\nabla_w \log p(x \mid w)\, ].
+\]
+
+Thus,
+\[
+g(x) = r(x)\nabla_w \log p(x \mid w)
+\]
+is an unbiased estimator of the true gradient.
+
+Policy gradient = SGA using this estimator.
+
+\subsection{Stochastic Update}
+
+Given samples $x_1, \dots, x_B$,
+\[
+w_{t+1} = w_t + \frac{1}{B}\sum_{i=1}^B r(x_i)\nabla_w \log p(x_i \mid w_t).
+\]
+
+For a discrete policy with probabilities $\pi_i$:
+\[
+\pi_{i}^{t+1} = \pi_i^t + \eta \frac{r_i}{\pi_i^t}.
+\]
+
+Two update interpretations:
+\begin{itemize}
+    \item \textbf{Option 1:} Euclidean projection.
+    \item \textbf{Option 2:} Mirror descent / exponentiated gradient:
+    \[
+    \pi_i^{t+1} = \pi_i^t \exp\!\left(\eta\, \frac{r_i}{\pi_i^t}\right),
+    \quad\text{then renormalize}.
+    \]
+\end{itemize}
+
+\section{Example: Gaussian Policy}
+
+Suppose $x \sim \mathcal{N}(z, \sigma^2 I)$, i.e.,
+\[
+x = z + \sigma v, \qquad v \sim \mathcal{N}(0, I).
+\]
+
+Compute:
+\[
+\nabla_z \log p(x) = \frac{x - z}{\sigma^2} = \frac{v}{\sigma}.
+\]
+
+Two useful gradient estimators:
+\[
+G_1 = r(z + \sigma v)\, \frac{v}{\sigma},
+\]
+\[
+G_2 = \left(r(z + \sigma v) - r(z)\right)\frac{v}{\sigma},
+\]
+where $G_2$ behaves similarly to a directional derivative and reduces variance.
+
+
+\end{document}
