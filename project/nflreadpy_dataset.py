@@ -11,9 +11,9 @@ SEED = 0
 YEARS = [2023, 2024]      # extend if you want more history (e.g., [2021, 2022, 2023])
 VAL_SPLIT = 0.2
 
-LOAD_YEARS = [2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
+#  LOAD_YEARS = [2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
 #  LOAD_YEARS = [2019, 2020, 2021, 2022, 2023, 2024, 2025]
-#  LOAD_YEARS = [2021, 2022, 2023, 2024, 2025]
+LOAD_YEARS = [2021, 2022, 2023, 2024, 2025]
 
 class NFLDataset(Dataset):
     def __init__(self, position_filter= None, valsplit = VAL_SPLIT, year = YEARS, min_window = 1, max_window = None, sequential = True, mu = None, sigma = None):
@@ -29,6 +29,7 @@ class NFLDataset(Dataset):
         assert("season" in ps.columns)
         assert("week" in ps.columns)
         assert("fantasy_points_ppr" in ps.columns)
+        assert("position" in ps.columns)
         #  ps = ps[ps["position"] == "QB"]
         if ps.empty:
             raise RuntimeError("player_stats is empty. Check seasons or data availability.")
@@ -82,7 +83,7 @@ class NFLDataset(Dataset):
                 value = torch.tensor(value)
                 feature = torch.zeros(self.max_window, len(cols))
                 feature[-1 * value.shape[0]:] = value
-                # True == padded
+                # mask: True means padded (to be ignored by Transformer)
                 mask = torch.ones(self.max_window).bool()
                 mask[-1 * value.shape[0]:] = False
                 if not sequential:
@@ -107,8 +108,6 @@ class NFLDataset(Dataset):
             # rolling[pid].append()
             rolling[pid].append({c: row[c] for c in cols})
             
-        assert(len(self.x_val) == len(self.y_val))
-        assert(len(self.x_val) == len(self.mask_val))
         #  print(self.x)
         #  print(self.y)
         self.x = torch.stack(self.x, dim = 0)
@@ -117,24 +116,33 @@ class NFLDataset(Dataset):
         #  print(self.x.shape)
         #  print(self.y.shape)
         #  input()
+
+        if mu is None and sigma is None:
+            self.mu = self.x.mean(axis=0, keepdims=True)
+            self.sigma = self.x.std(axis=0, keepdims=True)
+            self.sigma[self.sigma < 1e-6] = 1.0  # avoid div-by-zero
+        else:
+            self.mu = mu
+            self.sigma = sigma
+            assert(mu is not None and sigma is not None)
+        self.x = (self.x - self.mu) / self.sigma
+
+        self.y_mu = self.y.mean()
+        self.y_sigma = self.y.std().clamp(min=1e-6)
+        self.y = (self.y - self.y_mu) / self.y_sigma
+
         idx = torch.randperm(len(self.x))
         self.x = self.x[idx]
         self.y = self.y[idx]
         self.mask = self.mask[idx]
 
-        if mu is None and sigma is None:
-            self.mu = self.x.mean(axis=0, keepdims=True)
-            self.sigma = self.x.std(axis=0, keepdims=True)
-        else:
-            assert(mu is not None and sigma is not None)
-        sigma[sigma < 1e-6] = 1.0  # avoid div-by-zero
-        self.x = (self.x - mu) / sigma
-
         val_n = int(self.val_split * len(self.x))
 
         self.x_val = self.x[:val_n]
         self.y_val = self.y[:val_n]
-        self.mask_val = self.mask_val[:val_n]
+        self.mask_val = self.mask[:val_n]
+        assert(len(self.x_val) == len(self.y_val))
+        assert(len(self.x_val) == len(self.mask_val))
 
         self.x = self.x[val_n:]
         self.y = self.y[val_n:]
@@ -154,8 +162,8 @@ class NFLDataset(Dataset):
     def valset(self):
         return NFLValset(self.x_val, self.mask_val, self.y_val)
 
-    @class_method
-    def set_seed(self, s=SEED):
+    @classmethod
+    def set_seed(cls, s=SEED):
         random.seed(s)
         np.random.seed(s)
         torch.manual_seed(s)
@@ -185,10 +193,10 @@ if __name__ == "__main__":
     #  val_loader = DataLoader(dataset.valset(), batch_size=32, shuffle=True)
 
     # Example: iterate
-    for x, y in train_loader:
+    for x, y, _ in train_loader:
         print(x.shape, y.shape)
         break
 
-    #  for x, y in val_loader:
+    #  for x, y, _ in val_loader:
     #      print(x.shape, y.shape)
     #      break

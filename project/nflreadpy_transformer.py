@@ -12,15 +12,17 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 print("Device: {}".format(DEVICE))
 EMBED = False
 # ----------------------------------------------------------
-NFLDataset.set_seed()
 
 if EMBED:
-    from nflreadpy_dataset import NFLDataset
+    from nflreadpy_dataset_embed import NFLDataset as NFLDatasetEmbed
+    NFLDatasetEmbed.set_seed()
     dataset = NFLDatasetEmbed(["QB"], 0.0, np.arange(2015, 2024))
     val_dataset = NFLDatasetEmbed(["QB"], 0.0, [2025], max_window = dataset.max_window)
 else:
-    from nflreadpy_dataset_embed import NFLDataset as NFLDatasetEmbed
-    dataset = NFLDataset(["QB"], 0.0, np.arange(2015, 2024))
+    from nflreadpy_dataset import NFLDataset
+    NFLDataset.set_seed()
+    #  dataset = NFLDataset(["QB"], 0.0, np.arange(2015, 2024))
+    dataset = NFLDataset(["QB"], 0.0, np.arange(2021, 2024))
     val_dataset = NFLDataset(["QB"], 0.0, [2025], max_window = dataset.max_window, mu = dataset.mu, sigma = dataset.sigma)
 print("Training Dataset: x {}, y {}".format(dataset.x.shape, dataset.y.shape))
 print("Validation Dataset: x {}, y {}".format(val_dataset.x.shape, val_dataset.y.shape))
@@ -48,18 +50,20 @@ class PositionalEncoding(nn.Module):
         return x
 
 class NFLTransformer(nn.Module):
-    def __init__(self, in_dim, out_dim, max_sequence, d_model = 512):
+    def __init__(self, in_dim, out_dim, y_mu, y_sigma, max_sequence = 500, d_model = 512):
         super().__init__()
         self.d_model = d_model
-        self.pe = PositionalEncoding(self.d_model)
+        self.pe = PositionalEncoding(self.d_model, max_sequence)
+        self.y_mu = y_mu
+        self.y_sigma = y_sigma
 
         self.in_proj = nn.Linear(in_dim, self.d_model)
         self.transformer = nn.Transformer(
             d_model=self.d_model,
-            #  nhead=8,
-            #  num_encoder_layers=2,
-            #  num_decoder_layers=2,
-            #  dropout = 0.3,
+            nhead=8,
+            num_encoder_layers=6,
+            num_decoder_layers=6,
+            dropout = 0.1,
             batch_first=True
         )
         self.out_proj = nn.Sequential(
@@ -69,11 +73,14 @@ class NFLTransformer(nn.Module):
         )
 
     def forward(self, src, mask = None):
-        tgt = torch.roll(src, shifts=1, dims=1).clone()
-        tgt[:, 0] = -1  # first output is zero
+        tgt = torch.roll(src, shifts=-1, dims=1).clone()
+        tgt[:, -1] = 0  # first output is -1
         if mask is not None:
-            tgt_mask = torch.roll(mask, shifts=1, dims=1).clone()
-            tgt_mask[:, 0] = -1
+            tgt_mask = torch.roll(mask, shifts=-1, dims=1).clone()
+            tgt_mask[:, -1] = True
+
+        causal_mask = torch.triu(torch.ones(tgt.size(1), tgt.size(1), device=tgt.device, dtype=torch.bool), diagonal=1)
+
         src = self.pe(self.in_proj(src) * math.sqrt(self.d_model))
         tgt = self.pe(self.in_proj(tgt) * math.sqrt(self.d_model))
 
@@ -81,14 +88,16 @@ class NFLTransformer(nn.Module):
             out = self.transformer(src, tgt)
             pooled = (out).mean(dim=1)
         else:
-            out = self.transformer(src, tgt, src_key_padding_mask=mask, tgt_key_padding_mask=tgt_mask)
+            out = self.transformer(src, tgt, src_key_padding_mask=mask, tgt_key_padding_mask=tgt_mask, memory_key_padding_mask=mask, tgt_mask=causal_mask)
             valid = ~mask  # False->True
             lengths = valid.sum(dim=1, keepdim=True).clamp(min=1)
             pooled = (out * valid.unsqueeze(-1)).sum(dim=1) / lengths
-        return self.out_proj(out)
+        pred = self.out_proj(pooled)
+        pred = pred * self.y_sigma + self.y_mu
+        return pred
 # ----------------------------------------------------------
 
-model = NFLTransformer(dataset.x.shape[2], dataset.y.shape[1], dataset.x.shape[1]).to(DEVICE)
+model = NFLTransformer(dataset.x.shape[2], dataset.y.shape[1], dataset.y_mu.item(), dataset.y_sigma.item(), max_sequence = dataset.x.shape[1]).to(DEVICE)
 opt = torch.optim.Adam(model.parameters(), lr=LR)
 loss_fn = nn.MSELoss()
 
