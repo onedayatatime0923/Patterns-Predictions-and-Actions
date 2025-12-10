@@ -16,6 +16,7 @@ DEVICE	project/nflreadpy_train.py	/^DEVICE = "cuda" if torch.cuda.is_available()
 DEVICE	project/nflreadpy_transformer.py	/^DEVICE = "cuda" if torch.cuda.is_available() else "cpu"$/;"	v
 EPOCHS	project/nflreadpy_train.py	/^EPOCHS = 25$/;"	v
 EPOCHS	project/nflreadpy_transformer.py	/^EPOCHS = 200$/;"	v
+Example  Gaussian Policy	hw_script_note/main.tex	/^\\section{Example: Gaussian Policy}$/;"	s
 LOAD_YEARS	project/nflreadpy_dataset.py	/^LOAD_YEARS = [2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]$/;"	v
 LOAD_YEARS	project/nflreadpy_dataset_embed.py	/^LOAD_YEARS = [2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]$/;"	v
 LR	project/nflreadpy_train.py	/^LR = 5e-5$/;"	v
@@ -28,11 +29,15 @@ NFLTransformer	project/nflreadpy_transformer.py	/^class NFLTransformer(nn.Module
 NFLValset	project/nflreadpy_dataset.py	/^class NFLValset(Dataset):$/;"	c
 NFLValset	project/nflreadpy_dataset_embed.py	/^class NFLValset(Dataset):$/;"	c
 Optimization from Scratch	hw4/main.tex	/^\\section{Optimization from Scratch}$/;"	s
+Policy Gradient	hw_script_note/main.tex	/^\\section{Policy Gradient}$/;"	s
+Policy Gradient Derivation	hw_script_note/main.tex	/^\\subsection{Policy Gradient Derivation}$/;"	u
 PositionalEncoding	project/nflreadpy_transformer.py	/^class PositionalEncoding(nn.Module):$/;"	c
+Reinforcement Learning Overview	hw_script_note/main.tex	/^\\section{Reinforcement Learning Overview}$/;"	s
 SEED	project/nflreadpy_dataset.py	/^SEED = 0$/;"	v
 SEED	project/nflreadpy_dataset_embed.py	/^SEED = 0$/;"	v
 Step 1  A high-probability    good    event.	hw5/main.tex	/^\\paragraph{Step 1: A high-probability “good” event.}$/;"	P
 Step 2  Apply Hoeffding and bound the error probability.	hw5/main.tex	/^\\paragraph{Step 2: Apply Hoeffding and bound the error probability.}$/;"	P
+Stochastic Update	hw_script_note/main.tex	/^\\subsection{Stochastic Update}$/;"	u
 Train--Test Split	hw4/main.tex	/^\\section{Train--Test Split}$/;"	s
 VAL_SPLIT	project/nflreadpy_dataset.py	/^VAL_SPLIT = 0.2$/;"	v
 VAL_SPLIT	project/nflreadpy_dataset_embed.py	/^VAL_SPLIT = 0.2$/;"	v

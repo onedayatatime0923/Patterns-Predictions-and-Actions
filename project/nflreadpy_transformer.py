@@ -1,22 +1,27 @@
 import math
 import numpy as np
-from nflreadpy_dataset_embed import NFLDataset
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 
 # ------------------------- Config -------------------------
 BATCH_SIZE = 32
-EPOCHS = 200
+EPOCHS = 30
 LR = 5e-5
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 print("Device: {}".format(DEVICE))
+EMBED = False
 # ----------------------------------------------------------
+NFLDataset.set_seed()
 
-#  dataset = NFLDataset(["QB"], 0.0, [2021, 2022, 2023, 2024])
-dataset = NFLDataset(["QB"], 0.0, np.arange(2015, 2024))
-val_dataset = NFLDataset(["QB"], 0.0, [2025], max_window = dataset.max_window)
-#  val_dataset = dataset.valset()
+if EMBED:
+    from nflreadpy_dataset import NFLDataset
+    dataset = NFLDatasetEmbed(["QB"], 0.0, np.arange(2015, 2024))
+    val_dataset = NFLDatasetEmbed(["QB"], 0.0, [2025], max_window = dataset.max_window)
+else:
+    from nflreadpy_dataset_embed import NFLDataset as NFLDatasetEmbed
+    dataset = NFLDataset(["QB"], 0.0, np.arange(2015, 2024))
+    val_dataset = NFLDataset(["QB"], 0.0, [2025], max_window = dataset.max_window, mu = dataset.mu, sigma = dataset.sigma)
 print("Training Dataset: x {}, y {}".format(dataset.x.shape, dataset.y.shape))
 print("Validation Dataset: x {}, y {}".format(val_dataset.x.shape, val_dataset.y.shape))
 
@@ -58,19 +63,28 @@ class NFLTransformer(nn.Module):
             batch_first=True
         )
         self.out_proj = nn.Sequential(
-            nn.Linear(self.d_model, 1),
-            nn.Flatten(),
-            nn.Linear(max_sequence, 1024),
+            nn.Linear(self.d_model, 256),
             nn.ReLU(),
-            nn.Linear(1024, out_dim),
+            nn.Linear(256, out_dim),
         )
 
-    def forward(self, src):
+    def forward(self, src, mask = None):
         tgt = torch.roll(src, shifts=1, dims=1).clone()
-        tgt[:, 0] = 0  # first output is zero
-        src = self.pe(self.in_proj(src))
-        tgt = self.pe(self.in_proj(tgt))
-        out = self.transformer(src, tgt)
+        tgt[:, 0] = -1  # first output is zero
+        if mask is not None:
+            tgt_mask = torch.roll(mask, shifts=1, dims=1).clone()
+            tgt_mask[:, 0] = -1
+        src = self.pe(self.in_proj(src) * math.sqrt(self.d_model))
+        tgt = self.pe(self.in_proj(tgt) * math.sqrt(self.d_model))
+
+        if mask is None:
+            out = self.transformer(src, tgt)
+            pooled = (out).mean(dim=1)
+        else:
+            out = self.transformer(src, tgt, src_key_padding_mask=mask, tgt_key_padding_mask=tgt_mask)
+            valid = ~mask  # False->True
+            lengths = valid.sum(dim=1, keepdim=True).clamp(min=1)
+            pooled = (out * valid.unsqueeze(-1)).sum(dim=1) / lengths
         return self.out_proj(out)
 # ----------------------------------------------------------
 
@@ -82,9 +96,9 @@ def eval_loader(dl):
     model.eval()
     tot, n = 0.0, 0
     with torch.no_grad():
-        for xb, yb in dl:
-            xb, yb = xb.to(DEVICE), yb.to(DEVICE)
-            pred = model(xb)
+        for xb, yb, mask in dl:
+            xb, yb, mask = xb.to(DEVICE), yb.to(DEVICE), mask.to(DEVICE)
+            pred = model(xb, mask)
             loss = loss_fn(pred, yb)
             b = xb.size(0)
             tot += loss.item() * b
@@ -94,10 +108,10 @@ def eval_loader(dl):
 # ----------------------- Training -------------------------
 for epoch in range(1, EPOCHS + 1):
     model.train()
-    for xb, yb in train_loader:
-        xb, yb = xb.to(DEVICE), yb.to(DEVICE)
+    for xb, yb, mask in train_loader:
+        xb, yb, mask = xb.to(DEVICE), yb.to(DEVICE), mask.to(DEVICE)
         opt.zero_grad()
-        pred = model(xb)
+        pred = model(xb, mask)
         loss = loss_fn(pred, yb)
         loss.backward()
         opt.step()
@@ -114,17 +128,18 @@ for epoch in range(1, EPOCHS + 1):
     with torch.no_grad():
         if len(val_dataset) > 3:
             for i in range(3):
-                xb, yb = val_dataset[i]
-                pred = model(xb.unsqueeze(0).to(DEVICE)).item()
+                xb, yb, mask = val_dataset[i]
+                pred = model(xb.unsqueeze(0).to(DEVICE), mask.unsqueeze(0).to(DEVICE)).item()
                 print(f"\tExample {i}— true label: {float(yb.item()):.2f} | prediction: {pred:.2f}")
 # ----------------------------------------------------------
 
 # ------------------ Quick Sanity Check --------------------
+model = model.to("cpu")
 with torch.no_grad():
     if len(val_dataset) > 10:
         for i in np.random.randint(0, len(val_dataset), size =10):
-            xb, yb = val_dataset[i]
-            pred = model(xb.unsqueeze(0).to("cpu")).item()
+            xb, yb, mask = val_dataset[i]
+            pred = model(xb.unsqueeze(0).to("cpu"), mask.unsqueeze(0).to("cpu")).item()
             print(f"\nExample {i}— true label: {float(yb.item()):.2f} | prediction: {pred:.2f}")
 # ----------------------------------------------------------
 

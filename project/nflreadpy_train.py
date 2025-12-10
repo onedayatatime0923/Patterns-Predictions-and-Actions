@@ -1,5 +1,6 @@
+from nflreadpy_dataset import NFLDataset
+from nflreadpy_dataset_embed import NFLDataset as NFLDatasetEmbed
 import numpy as np
-from nflreadpy_dataset_embed import NFLDataset
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
@@ -12,10 +13,10 @@ LR = 5e-5
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 print("Device: {}".format(DEVICE))
 
-dataset = NFLDataset(["QB"], 0.0, np.arange(2015, 2024), min_window = WINDOW, max_window = WINDOW, sequential = False)
-#  dataset = NFLDataset(["QB"], 0.0, [2022, 2023, 2024], min_window = WINDOW, max_window = WINDOW, sequential = False)
+dataset = NFLDataset(["QB"], 0.0, np.arange(2021, 2024), min_window = WINDOW, max_window = WINDOW, sequential = False)
 val_dataset = NFLDataset(["QB"], 0.0, [2025], min_window = WINDOW, max_window = WINDOW, sequential = False)
-#  val_dataset = dataset.valset()
+#  dataset = NFLDatasetEmbed(["QB"], 0.0, np.arange(2015, 2024), min_window = WINDOW, max_window = WINDOW, sequential = False)
+#  val_dataset = NFLDatasetEmbed(["QB"], 0.0, [2025], min_window = WINDOW, max_window = WINDOW, sequential = False)
 print("Training Dataset: x {}, y {}".format(dataset.x.shape, dataset.y.shape))
 print("Validation Dataset: x {}, y {}".format(val_dataset.x.shape, val_dataset.y.shape))
 
@@ -44,7 +45,7 @@ def eval_loader(dl):
     model.eval()
     tot, n = 0.0, 0
     with torch.no_grad():
-        for xb, yb in dl:
+        for xb, yb, _ in dl:
             xb, yb = xb.to(DEVICE), yb.to(DEVICE)
             pred = model(xb)
             loss = loss_fn(pred, yb)
@@ -56,7 +57,7 @@ def eval_loader(dl):
 # ----------------------- Training -------------------------
 for epoch in range(1, EPOCHS + 1):
     model.train()
-    for xb, yb in train_loader:
+    for xb, yb, _ in train_loader:
         #  print(xb.shape)
         #  print(yb.shape)
         #  input()
@@ -76,7 +77,7 @@ for epoch in range(1, EPOCHS + 1):
 with torch.no_grad():
     if len(val_dataset) > 10:
         for i in np.random.randint(0, len(val_dataset), size =10):
-            xb, yb = val_dataset[i]
+            xb, yb, _ = val_dataset[i]
             pred = model(xb.unsqueeze(0).to(DEVICE)).item()
             print(f"\nExample {i}— true label: {float(yb.item()):.2f} | prediction: {pred:.2f}")
 # ----------------------------------------------------------

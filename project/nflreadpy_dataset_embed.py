@@ -1,5 +1,7 @@
 from collections import defaultdict, deque
 import pandas as pd
+import polars as pl
+from pathlib import Path
 import nflreadpy as nfl
 import random
 import numpy as np
@@ -7,8 +9,8 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 
 SEED = 0
-#  YEARS = [2021, 2022, 2023, 2024]      # extend if you want more history (e.g., [2021, 2022, 2023])
-YEARS = [2023, 2024]      # extend if you want more history (e.g., [2021, 2022, 2023])
+YEARS = [2021, 2022, 2023, 2024, 2025]      # extend if you want more history (e.g., [2021, 2022, 2023])
+# YEARS = [2023, 2024]      # extend if you want more history (e.g., [2021, 2022, 2023])
 VAL_SPLIT = 0.2
 
 LOAD_YEARS = [2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
@@ -21,8 +23,23 @@ class NFLDataset(Dataset):
         self.val_split_players = val_split_players
         self.val_split = valsplit
 
+        OUTPUT_DIR = 'output-scrape'
+        df_emb = pl.read_parquet(Path(OUTPUT_DIR)/'season-week-id-emb.parquet')
+
         pbp = nfl.load_pbp()
-        player_stats = nfl.load_player_stats(LOAD_YEARS)
+        # HARD CODING TO QB
+        player_stats = nfl.load_player_stats(year)
+        #  player_stats = nfl.load_player_stats(LOAD_YEARS)
+        player_stats = player_stats.filter(
+            pl.col('position') == 'QB'
+        )
+        null_replace = [float(-1.0)] * 1536
+        player_stats = player_stats.join(
+            df_emb,
+            on=['player_id','season','week'],
+            how='left'
+        )
+        player_stats = player_stats.with_columns(pl.col('note_emb').fill_null(null_replace))
         ps = player_stats.to_pandas()
         assert("player_id" in ps.columns)
         assert("player_name" in ps.columns)
@@ -41,7 +58,8 @@ class NFLDataset(Dataset):
             cols.remove(i)
 
         cols = [c for c in cols if np.issubdtype(ps[c].dtype, np.number)]
-        #  cols.append('note_emb')
+        if 'note_emb' not in cols:
+            cols.append('note_emb')
         #  print("Feature: {}".format(" ".join(cols)))
         #  input()
         ps.sort_values(by=["player_id", "season", "week"], inplace=True)
@@ -78,14 +96,19 @@ class NFLDataset(Dataset):
                     value.append([])
                     for c in cols:
                         v = r.get(c, 0.0)
-                        if pd.isna(v): v = 0.0
+                        if c != 'note_emb' and pd.isna(v): v = 0.0
                         if c == 'note_emb':
-                            value[-1].extend(list(v))
+                            try:
+                                value[-1].extend(list(v))
+                            except Exception as e:
+                                print(v)
+                                print(e)
                         else:
                             value[-1].append(float(v))
 
                 value = torch.tensor(value)
-                feature = torch.ones(self.max_window, len(cols)) * -1
+                # emb is size 1536 so add 1535 to compensate
+                feature = torch.ones(self.max_window, len(cols)+1535) * -1
                 feature[-1 * value.shape[0]:] = value
                 if not sequential:
                     feature = feature.view((-1))
@@ -108,7 +131,7 @@ class NFLDataset(Dataset):
             # Ingest current week into the rolling window (store only the
             # feature cols)
             # rolling[pid].append()
-            #  row['note_emb'] = 'EMBEDDING'
+            # row['note_emb'] = 'EMBEDDING' # this is in row
             rolling[pid].append({c: row[c] for c in cols})
             
         assert(len(self.x_val) == len(self.y_val))
